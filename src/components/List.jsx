@@ -55,12 +55,19 @@ const ListData = () => {
   const isRowHighlighted = (ean) => ean === selectedEAN;
 
   // Create a map of EAN to "EK Preis (netto)"
+  const scrollBarStyle = { // Custom scrollbar style
+    maxHeight: "800px",
+    overflowY: "auto",
+    scrollbarWidth: "thin", // Width of the scrollbar
+    scrollbarColor: "#89ABE3 #f0f0f0", // Color of the thumb and track
+    scrollbarTrackColor: "#f0f0f0", // Color of the track
+  };
 
   const renderPdfData = () => (
-    <div className="col-lg-6 mb-4" style={{ maxHeight: "800px", overflowY: "auto" }}>
+    <div className="col-lg-6 mb-4" style={scrollBarStyle} >
       <div className="card shadow">
         <h5 className="card-header text-white bg-primary">Extracted PDF Data</h5>
-        <div className="card-body">
+        <div className="card-body"  >
           <div className="table-responsive">
             <table className="table table-hover">
               <thead>
@@ -68,21 +75,18 @@ const ListData = () => {
                   <th>EAN Number</th>
                   <th>Price</th>
                   <th>Artikelbezeichnung</th>
-                 
                 </tr>
               </thead>
               <tbody>
                 {pdfData.data.map((item, index) => {
                   const bundPriceMatch = item.Artikelbezeichnung.match(/Bund\s+([\d.,]+)\s+€/);
-                  // const bundPriceMatch = item.Artikelbezeichnung.match(/(\d+,\d+)\s+€\s+\/\s+m\s+(\d+,\d+)\s+€\s+\/\s+m/);
-
                   const bundPrice = bundPriceMatch ? bundPriceMatch[1] : 'N/A';
-
+  
                   const kartPriceMatch = item.Artikelbezeichnung.match(/(\d+,\d+)\s+€\s+\/\s+m\s+(\d+,\d+)\s+€\s+\/\s+m/);
                   const kartPrice = kartPriceMatch ? kartPriceMatch[1] : 'N/A';
-
+  
                   const price = item["EK Preis (netto)"] ? item["EK Preis (netto)"] : item["Unverb. VK Preisempfehlung"];
-
+  
                   return (
                     <tr
                       key={index}
@@ -92,10 +96,7 @@ const ListData = () => {
                     >
                       <td>{item.EAN}</td>
                       <td>{price ? parseFloat(price.replace(',', '.')) * 100 : (kartPrice !== 'N/A' ? parseFloat(kartPrice.replace(',', '.')) * 100 : parseFloat(bundPrice.replace(',', '.')) * 100)}</td>
-
                       <td>{item.Artikelbezeichnung}</td>
-                      {/* <td>{bundPrice}</td>
-                      <td>{kartPrice}</td> */}
                     </tr>
                   );
                 })}
@@ -110,6 +111,8 @@ const ListData = () => {
   
   
   
+  
+ 
   const renderExcelData = () => {
     const rows = excelData.combined_data ? excelData.combined_data.split("\n") : [];
     const excelRows = rows.map((row, index) => {
@@ -135,10 +138,20 @@ const ListData = () => {
       }
   
       return { ean, lp, updatedPrice };
-    });
+    }).filter(row => row.updatedPrice !== "N/A");
   
+    const highlightedStyle = { backgroundColor: "#ffdddd" }; // For general highlight
+    const selectedStyle = { backgroundColor: "#89ABE3", color: "white" }; // For selected EAN (dark red)
+    const scrollBarStyle = { // Custom scrollbar style
+      maxHeight: "800px",
+      overflowY: "auto",
+      scrollbarWidth: "thin", // Width of the scrollbar
+      scrollbarColor: "#89ABE3 #f0f0f0", // Color of the thumb and track
+      scrollbarTrackColor: "#f0f0f0", // Color of the track
+    };
+    
     return (
-      <div className="col-lg-6 mb-4" style={{ maxHeight: "800px", overflowY: "auto" }}>
+      <div className="col-lg-6 mb-4" style={scrollBarStyle}>
         <div className="card shadow">
           <h5 className="card-header text-white bg-primary">Extracted Excel Data</h5>
           <div className="card-body">
@@ -151,18 +164,17 @@ const ListData = () => {
                     <th>Updated Price</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="m-3">
                   {excelRows.map((row, index) => (
                     <tr
                       key={index}
                       ref={isRowHighlighted(row.ean) ? highlightedRef : null}
-                      className={`${isRowHighlighted(row.ean) ? "table-primary" : ""}`}
+                      style={isRowHighlighted(row.ean) ? selectedStyle : highlightedStyle}
                       onClick={() => handleRowClick(row.ean)}
                     >
                       <td>{row.ean}</td>
                       <td>{row.lp}</td>
                       <td>{parseFloat(row.updatedPrice.replace(',', '.')) * 100}</td>
-
                     </tr>
                   ))}
                 </tbody>
@@ -173,6 +185,12 @@ const ListData = () => {
       </div>
     );
   };
+  
+
+  
+  
+  
+  
   
   
   

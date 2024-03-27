@@ -94,7 +94,7 @@ const FileUpload = () => {
 
     {/* Second Box */}
     <Col lg={4}>
-      <Link to="#" className="text-decoration-none">
+      <Link to={`/Voice-Assistant`} className="text-decoration-none">
         <Card
           className="shadow-sm "
           style={{

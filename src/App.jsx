@@ -25,6 +25,10 @@ import Id2 from './pages/Id2';
 import Show from './components/Dasboard/Show';
 
 import Show2 from './pages/Show2';
+import Voice from './components/Voice-assistant/Voice';
+import Voice2 from './pages/Voice/Voice2'
+import Deepgram from '../src/components/Voice-assistant/Deepgram';
+import Transcription from './components/Voice-assistant/Transcription';
 
 function App() {
   const router = createBrowserRouter([
@@ -80,6 +84,15 @@ function App() {
       element: <Show2 />
      }, // Add a new route for displaying compared data
 
+     {
+      path: "/Voice-Assistant", 
+      element: <Voice2 />
+     },
+
+     {
+      path: "/transcription", 
+      element: < Transcription />
+     },
 
 
 

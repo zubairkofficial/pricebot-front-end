@@ -20317,7 +20317,7 @@ pre[class*=language-] > code {
     display: none;
   }
   .pc-sidebar {
-    left: -280px;
+    
     box-shadow: none;
     background: var(--bs-body-bg);
     top: 0;

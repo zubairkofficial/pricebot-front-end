@@ -18,6 +18,8 @@ class Helpers{
         }
     }
 
+    
+
     static authFileHeaders = {
         headers: {
             "Content-Type": 'multipart/form-data',

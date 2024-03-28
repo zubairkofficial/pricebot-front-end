@@ -29,6 +29,9 @@ import Voice from './components/Voice-assistant/Voice';
 import Voice2 from './pages/Voice/Voice2'
 import Deepgram from '../src/components/Voice-assistant/Deepgram';
 import Transcription from './components/Voice-assistant/Transcription';
+import Index2 from './pages/Admin2/Index2';
+import AddUser2 from './pages/Admin2/AddUser2';
+import AdminLogin from './components/Auth/Login/AdminLogin';
 
 function App() {
   const router = createBrowserRouter([
@@ -39,6 +42,11 @@ function App() {
     {
       path: "/registration",
       element: <Registration />,
+    },
+
+    {
+      path: "/Admin-Login",
+      element: <AdminLogin />,
     },
     {
       path: "/show-data",
@@ -92,6 +100,15 @@ function App() {
      {
       path: "/transcription", 
       element: < Transcription />
+     },
+
+     {
+      path: "/Admin", 
+      element: < Index2 />
+     }, 
+      {
+      path: "/AddUser", 
+      element: < AddUser2 />
      },
 
 

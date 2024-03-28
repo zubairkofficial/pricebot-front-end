@@ -5,10 +5,13 @@ function Dashboard() {
   const [isListening, setIsListening] = useState(false);
   const [listeningText, setListeningText] = useState('');
   const [transcriptionText, setTranscriptionText] = useState('');
+  const [summary, setSummary] = useState('');
   const [file, setFile] = useState(null);
   const [transcribing, setTranscribing] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+
+
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -41,7 +44,6 @@ function Dashboard() {
 
   const handleListen = () => setIsListening(!isListening);
 
-  const handleFileChange = (event) => setFile(event.target.files[0]);
 
   const handleTranscribeClick = async () => {
     if (file) {
@@ -61,7 +63,8 @@ function Dashboard() {
 
         const data = await response.json();
 
-        setTranscriptionText(data.results.channels[0].alternatives[0].transcript);
+        setTranscriptionText(data.transcription.results.channels[0].alternatives[0].transcript);
+        setSummary(data.summary);
       } catch (error) {
         console.error('Error transcribing the file:', error);
         setErrorMessage('Error transcribing the file.');
@@ -73,9 +76,12 @@ function Dashboard() {
     }
   };
 
+  const handleFileChange = (event) => setFile(event.target.files[0]);
+
   const handleNextPageClick = () => {
-    navigate('/transcription', { state: { text: transcriptionText } });
+    navigate('/transcription', { state: { text: transcriptionText, summary: summary } });
   };
+
   return (
     <div className="container mt-5">
       <h2 className="text-center mb-4">ProtoKoll</h2>
@@ -93,6 +99,8 @@ function Dashboard() {
               <div className="card-body">
                 <h5 className="card-title">Transcription</h5>
                 <p className="card-text">{transcriptionText}</p>
+                <h5 className="card-title mt-4">Summary</h5>
+                <p className="card-text">{summary}</p>
                 <button onClick={handleNextPageClick} className="btn btn-outline-secondary">
                   Send Via Email
                 </button>
@@ -105,8 +113,7 @@ function Dashboard() {
               <p className="card-text">{listeningText || "Start speaking or upload your speech to transcribe it here."}</p>
             </div>
           </div>
-         
-          <button onClick={handleListen} className={`btn ${isListening ? 'btn-danger' : 'btn-success'} mb-3`}>
+          <button onClick={() => setIsListening(!isListening)} className={`btn ${isListening ? 'btn-danger' : 'btn-success'} mb-3`}>
             {isListening ? 'Stop Speech Recognition' : 'Start Speech Recognition'}
           </button>
         </div>

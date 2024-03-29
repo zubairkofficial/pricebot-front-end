@@ -87,7 +87,7 @@ const Sidebar = () => {
             transform: "translateY(-50%)",
             left: sidebarOpen ? "240px" : "10px", // Adjusted position
             backgroundColor: "transparent",
-            border: "none", 
+            border: "none",
             outline: "none",
             cursor: "pointer",
             fontSize: "25px",
@@ -152,14 +152,43 @@ const Sidebar = () => {
             </div>
             <ul className="pc-navbar">
               <li className="pc-item pc-caption"></li>
-              {/* <li className="pc-item pc-hasmenu">
-                <Link to="/List" className="pc-link">
+
+              <li className="pc-item pc-hasmenu">
+  <Link to="/Admin" className="pc-link">
+    <span className="pc-micon">
+      {/* Replace the <svg> element with the desired <i> element */}
+      <i class="icon-chevron-right"></i>
+    </span>
+    <span className="pc-mtext">Liste der Benutzer</span>
+    <span className="pc-arrow">
+      <i data-feather="chevron-right"></i>
+    </span>
+  </Link>
+</li>
+
+
+              <li className="pc-item pc-hasmenu">
+                <Link to="/Select-Role" className="pc-link">
                   <span className="pc-micon">
                     <svg className="pc-icon">
                       <use xlinkHref="#custom-status-up"></use>
                     </svg>
                   </span>
-                  <span className="pc-mtext">Werkzeuge</span>
+                  <span className="pc-mtext">Rolle und Berechtigungen</span>
+                  <span className="pc-arrow">
+                    <i data-feather="chevron-right"></i>
+                  </span>
+                </Link>
+              </li>
+{/* 
+              <li className="pc-item pc-hasmenu">
+                <Link to="/AddUser" className="pc-link">
+                  <span className="pc-micon">
+                    <svg className="pc-icon">
+                      <use xlinkHref="#custom-status-up"></use>
+                    </svg>
+                  </span>
+                  <span className="pc-mtext">Benutzer hinzufügen</span>
                   <span className="pc-arrow">
                     <i data-feather="chevron-right"></i>
                   </span>
@@ -223,7 +252,7 @@ const Sidebar = () => {
             </ul>
             <div style={{ paddingLeft: "60px", paddingTop: "17rem" }}>
               <a
-                href="/Admin-Login"
+                href="/Admin-login"
                 onClick={logout}
                 style={{
                   textDecoration: "none",
@@ -232,7 +261,7 @@ const Sidebar = () => {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "8px",
-                  paddingTop: "60px",
+                  paddingTop: "40px",
                 }}
               >
                 <FaSignOutAlt /> {/* Logout icon */}

@@ -30,10 +30,11 @@ const Login = () => {
       toast.success(resp?.data?.message);
       navigate("/Admin");
     } catch (error) {
-        toast.error(error?.response?.data?.message);
-        console.log("error while user login", error);
+      toast.error(error?.response?.data?.message);
+      console.log("error while user login", error);
     }
   };
+
   return (
     <>
       <div class="auth-main">
@@ -85,7 +86,7 @@ const Login = () => {
                     type="password"
                     class="form-control"
                     id="floatingInput1"
-                    placeholder="Passwort"
+                    placeholder="Password"
                   />
                 </div>
 

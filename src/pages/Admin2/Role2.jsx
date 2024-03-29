@@ -11,6 +11,7 @@ import Sidebar2 from "../../components/Sidebar/Sidebae2";
 import First from '../../components/Dasboard/First';
 import Index from '../../components/Admin/Index';
 import SideBar from '../../components/Admin/SideBar';
+import Role from '../../components/Admin/Role';
 
 
 
@@ -52,7 +53,7 @@ const Index2 = () => {
         <SideBar />
         {/* <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start --> */}
         {/* <Header /> */}
-            <Index 
+            <Role
        
         />
         

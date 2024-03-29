@@ -29,14 +29,14 @@ const Index2 = () => {
       .catch((error) => console.error("Script loading failed: ", error));
   }, []);
 
-  React.useEffect(() => {
-    const user_Login_Id = localStorage.getItem("user_Login_Id");
-    if (user_Login_Id) {
-      navigate('/AddUser');
-    } else {
-      navigate('/Admin-Login');
-    }
-  }, [navigate]);
+  // React.useEffect(() => {
+  //   const user_Login_Id = localStorage.getItem("user_Login_Id");
+  //   if (user_Login_Id) {
+  //     navigate('/AddUser');
+  //   } else {
+  //     navigate('/Admin-Login');
+  //   }
+  // }, [navigate]);
 
   return (
     <>

@@ -19,6 +19,8 @@ const Login = () => {
     }));
   };
 
+ 
+
   const handleSubmit = async () => {
     try {
       const resp = await axios.post(
@@ -26,15 +28,24 @@ const Login = () => {
         data
       );
       console.log("login user", resp);
+      
+      // Store user data in local storage
       localStorage.setItem("user_Login_Id", resp?.data?.user?.id);
-      toast.success(resp?.data?.message)
+      localStorage.setItem("user_Name", resp?.data?.user?.name);
+      localStorage.setItem("user_Email", resp?.data?.user?.email);
+      localStorage.setItem("user_Services", JSON.stringify(resp?.data?.user?.services));
+  
+      // Show success message
+      toast.success(resp?.data?.message);
+  
+      // Redirect to the List page
       navigate("/List");
     } catch (error) {
       console.log("error while user login", error);
-      toast.error(error?.response?.data?.message)
-
+      toast.error(error?.response?.data?.message);
     }
   };
+  
   return (
     <>
       <div class="auth-main">

@@ -47,25 +47,19 @@ const AddUserForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!user.name || !user.email || !user.password) {
-      setErrorMessage('Name, email, and password are required.');
-      setShowAlert(true);
-      return;
-    }
+   
   
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/Role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: user.name,
-          email: user.email,
-          password: user.password,
+         
           services: user.services,
-          role: user.role,
+          
         }),
       });
   
@@ -76,11 +70,9 @@ const AddUserForm = () => {
       // Reset form fields
       setUser({
         name: '',
-        email: '',
-        password: '',
-        showPassword: false,
+       
         services: [],
-        role: '',
+      
       });
   
       // Reset error message and hide alert
@@ -103,7 +95,7 @@ const AddUserForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="container p-4 rounded shadow-sm bg-light">
-    <h2 className="mb-4">Benutzer hinzufügen</h2>
+    <h2 className="mb-4">Rolle und Berechtigungen</h2>
     {showAlert && (
       <div className="alert alert-danger" role="alert">
         {errorMessage}
@@ -114,11 +106,11 @@ const AddUserForm = () => {
       <label htmlFor="nameInput" className="form-label">Name</label>
       <input type="text" className="form-control" id="nameInput" name="name" value={user.name} onChange={handleChange} required />
     </div>
-    <div className="mb-3">
+    {/* <div className="mb-3">
       <label htmlFor="emailInput" className="form-label">E-Mail</label>
       <input type="email" className="form-control" id="emailInput" name="email" value={user.email} onChange={handleChange} required />
-    </div>
-    <div className="mb-3">
+    </div> */}
+    {/* <div className="mb-3">
       <label htmlFor="passwordInput" className="form-label d-flex align-items-center">
         Passwort
         <span className="ms-auto" onClick={togglePasswordVisibility}>
@@ -126,7 +118,7 @@ const AddUserForm = () => {
         </span>
       </label>
       <input type={user.showPassword ? 'text' : 'password'} className="form-control" id="passwordInput" name="password" value={user.password} onChange={handleChange} required />
-    </div>
+    </div> */}
     <div className="mb-3">
       <label htmlFor="serviceSelect" className="form-label">Dienste</label>
       <Select
@@ -136,7 +128,6 @@ const AddUserForm = () => {
         placeholder="Dienste auswählen"
         className="form-control"
         name='services'
-        required
       />
     </div>
     {/* <div className="mb-3">
@@ -148,7 +139,8 @@ const AddUserForm = () => {
         ))}
       </select>
     </div> */}
-    <button type="submit" className="btn btn-outline-primary">Benutzer hinzufügen</button>
+    <button type="submit" className="btn btn-outline-primary">  Rolle hinzufügen
+ </button>
     <Link to={`/Admin`}  className="btn btn-outline-danger ms-2">Abbrechen</Link>
   </form>  
 

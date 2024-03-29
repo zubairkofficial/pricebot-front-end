@@ -16,15 +16,23 @@ import List from "./components/List";
 import Id from "./components/Id";
 import Sidebar2 from "./components/Sidebar/Sidebae2";
 // import indexx from './components/Dasboard/index';
-import First from './components/Dasboard/First';
-import First2 from './pages/First2';
-import List2 from './pages/List2';
-import Id2 from './pages/Id2';
+import First from "./components/Dasboard/First";
+import First2 from "./pages/First2";
+import List2 from "./pages/List2";
+import Id2 from "./pages/Id2";
 // import History from './components/Dasboard/History';
 
-import Show from './components/Dasboard/Show';
+import Show from "./components/Dasboard/Show";
 
-import Show2 from './pages/Show2';
+import Show2 from "./pages/Show2";
+import Voice from "./components/Voice-assistant/Voice";
+import Voice2 from "./pages/Voice/Voice2";
+import Deepgram from "../src/components/Voice-assistant/Deepgram";
+import Transcription from "./components/Voice-assistant/Transcription";
+import Index2 from "./pages/Admin2/Index2";
+import AddUser2 from "./pages/Admin2/AddUser2";
+import AdminLogin from "./components/Auth/Login/AdminLogin";
+import Role2 from './pages/Admin2/Role2';
 
 function App() {
   const router = createBrowserRouter([
@@ -38,61 +46,75 @@ function App() {
     },
 
     {
-      path: "/Admin-Login",
+      path: "/Admin-login",
       element: <AdminLogin />,
     },
     {
       path: "/show-data",
-      element: <Next />
+      element: <Next />,
     }, // Add a new route for displaying compared data
     {
       path: "/List-data",
-      element: <List />
+      element: <List />,
     }, // Add a new route for displaying compared data
 
     {
       path: "/History/:id",
-      element: <Id />
+      element: <Id />,
     }, // Add a new route for displaying compared data
 
     {
       path: "/Data/:id",
-      element: <Id2 />
+      element: <Id2 />,
     },
 
     {
       path: "SideBar",
-      element: <Sidebar2 />
+      element: <Sidebar2 />,
     }, // Add a new route for displaying compared data
     {
       path: "/Home",
-      element: <First />
+      element: <First />,
     }, // Add a new route for displaying compared data
     {
       path: "/List",
-      element: <First2 />
+      element: <First2 />,
     }, // Add a new route for displaying compared data
     {
       path: "/Data",
-      element: <List2 />
+      element: <List2 />,
     }, // Add a new route for displaying compared data
     {
       path: "/Show",
-      element: <Show />
-     }, // Add a new route for displaying compared data
-     {
+      element: <Show />,
+    }, // Add a new route for displaying compared data
+    {
       path: "/Listing",
-      element: <Show2 />
-     }, // Add a new route for displaying compared data
+      element: <Show2 />,
+    }, // Add a new route for displaying compared data
 
+    {
+      path: "/Voice-Assistant",
+      element: <Voice2 />,
+    },
 
+    {
+      path: "/transcription",
+      element: <Transcription />,
+    },
 
-
-
-
-  
-
-    
+    {
+      path: "/Admin",
+      element: <Index2 />,
+    },
+    {
+      path: "/AddUser",
+      element: <AddUser2 />,
+    }, 
+    {
+      path: "/Select-Role",
+      element: < Role2 />,
+    },
   ]);
 
   return (
@@ -102,5 +124,8 @@ function App() {
     </>
   );
 }
+
+//create auth route
+// make authentication
 
 export default App;

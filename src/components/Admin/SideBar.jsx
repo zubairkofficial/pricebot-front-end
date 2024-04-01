@@ -154,20 +154,19 @@ const Sidebar = () => {
               <li className="pc-item pc-caption"></li>
 
               <li className="pc-item pc-hasmenu">
-  <Link to="/Admin" className="pc-link">
-    <span className="pc-micon">
-      {/* Replace the <svg> element with the desired <i> element */}
-      <i class="icon-chevron-right"></i>
-    </span>
-    <span className="pc-mtext">Liste der Benutzer</span>
-    <span className="pc-arrow">
-      <i data-feather="chevron-right"></i>
-    </span>
-  </Link>
-</li>
+                <Link to="/Admin" className="pc-link">
+                  <span className="pc-micon">
+                    {/* Replace the <svg> element with the desired <i> element */}
+                    <i class="icon-chevron-right"></i>
+                  </span>
+                  <span className="pc-mtext">Liste der Benutzer</span>
+                  <span className="pc-arrow">
+                    <i data-feather="chevron-right"></i>
+                  </span>
+                </Link>
+              </li>
 
-
-              <li className="pc-item pc-hasmenu">
+              {/* <li className="pc-item pc-hasmenu">
                 <Link to="/Select-Role" className="pc-link">
                   <span className="pc-micon">
                     <svg className="pc-icon">
@@ -179,8 +178,8 @@ const Sidebar = () => {
                     <i data-feather="chevron-right"></i>
                   </span>
                 </Link>
-              </li>
-{/* 
+              </li> */}
+              {/* 
               <li className="pc-item pc-hasmenu">
                 <Link to="/AddUser" className="pc-link">
                   <span className="pc-micon">

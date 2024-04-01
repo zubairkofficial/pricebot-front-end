@@ -10,6 +10,7 @@ const Sidebar = () => {
   const [historyData, setHistoryData] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true); // State variable to track sidebar visibility
   const { id } = useParams();
+  const [selectedEmail, setSelectedEmail] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,10 +38,16 @@ const Sidebar = () => {
 
     fetchData();
 
-    const storedModel = localStorage.getItem("selectedModel");
-    if (storedModel) {
-      setSelectedModel(storedModel);
+    const name = localStorage.getItem('user_Name');
+    const email = localStorage.getItem('user_Email');
+    if (name) {
+      setSelectedModel(name);
     }
+    if (email) {
+      setSelectedEmail(email);
+    }
+
+  
   }, []);
 
   function logout() {
@@ -131,8 +138,8 @@ const Sidebar = () => {
                     />
                   </div>
                   <div className="flex-grow-1 ms-3 me-2">
-                    <h6 className="mb-0">Jonh Smith</h6>
-                    <small>Administrator</small>
+                    <h6 className="mb-0"> {selectedModel}!</h6>
+                    <small>{selectedEmail}</small>
                   </div>
                   <a
                     className="btn btn-icon btn-link-secondary avtar"

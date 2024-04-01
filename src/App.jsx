@@ -33,6 +33,7 @@ import Index2 from "./pages/Admin2/Index2";
 import AddUser2 from "./pages/Admin2/AddUser2";
 import AdminLogin from "./components/Auth/Login/AdminLogin";
 import Role2 from './pages/Admin2/Role2';
+import Edit2 from './pages/Admin2/Edit2';
 
 function App() {
   const router = createBrowserRouter([
@@ -114,6 +115,11 @@ function App() {
     {
       path: "/Select-Role",
       element: < Role2 />,
+    },
+
+    {
+      path: "/Edit/:roleId",
+      element: < Edit2 />,
     },
   ]);
 

@@ -25,8 +25,13 @@ const Login = () => {
         `${import.meta.env.VITE_API_URL}/AdminLogin`,
         data
       );
-      console.log("login user", resp);
-      localStorage.setItem("user_Login_Id", resp?.data?.user?.id);
+      // console.log("login user", resp);
+        // Store user data in local storage
+        // localStorage.setItem("user_Login_Id", resp?.data?.user?.id);
+        // localStorage.setItem("user_Name", resp?.data?.user?.name);
+        // localStorage.setItem("user_Email", resp?.data?.user?.email);
+        localStorage.setItem("role", resp?.data?.user?.role);
+        // localStorage.setItem("user_Services", JSON.stringify(resp?.data?.user?.services));
       toast.success(resp?.data?.message);
       navigate("/Admin");
     } catch (error) {
@@ -103,6 +108,8 @@ const Login = () => {
                   >
                     Anmeldung
                   </button>
+
+                  {/* <marquee behavior="" direction="right">Hello</marquee> */}
                 </div>
               </div>
             </div>

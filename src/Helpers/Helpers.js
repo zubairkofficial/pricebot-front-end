@@ -1,7 +1,7 @@
 class Helpers{
     static appName = "Nuance";
     static localhost = '127.0.0.1:8000';
-    static server = 'api-pricebot.paitfull.com';
+    static server = 'pricebotapi.martinmobiles.com';
     static basePath = `//${this.localhost}`;
     static apiUrl = `${this.basePath}/api/`;
     

@@ -10,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 import Sidebar2 from "../../components/Sidebar/Sidebae2";
 import First from '../../components/Dasboard/First';
 import Index from '../../components/Admin/Index';
+import AddUser from '../../components/Admin/AddUser';
 import SideBar from '../../components/Admin/SideBar';
-import Role from '../../components/Admin/Role';
-
+import Edit from '../../components/Admin/Edit';
 
 
 const Index2 = () => {
@@ -30,14 +30,14 @@ const Index2 = () => {
       .catch((error) => console.error("Script loading failed: ", error));
   }, []);
 
- React.useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role === "1") {
-      navigate('/Admin');
-    } else {
-      navigate('/Admin-Login');
-    }
-  }, [navigate]);
+//   React.useEffect(() => {
+//     const role = localStorage.getItem("role");
+//     if (role === "1") {
+//       navigate('/Edit/:roleId"');
+//     } else {
+//       navigate('/Admin-Login');
+//     }
+//   }, [navigate]);
 
   return (
     <>
@@ -53,9 +53,7 @@ const Index2 = () => {
         <SideBar />
         {/* <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start --> */}
         {/* <Header /> */}
-            <Role
-       
-        />
+            < Edit/>
         
  
         <Footer />

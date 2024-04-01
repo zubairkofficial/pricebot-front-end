@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function TranscriptionForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [title, settitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -17,6 +18,7 @@ function TranscriptionForm() {
     setLoading(true);
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/sendEmail`, {
+        title, 
         name,
         email,
         transcriptionText: text,
@@ -51,6 +53,11 @@ function TranscriptionForm() {
                 <p className="text-center">Transcription sent to {email} successfully!</p>
               ) : (
                 <form onSubmit={handleSubmit}>
+
+                     <div className="mb-3">
+                    <label htmlFor="title" className="form-label">Title:</label>
+                    <input type="text" id="title" value={title} onChange={(e) => settitle(e.target.value)} className="form-control" required />
+                  </div>
                   <div className="mb-3">
                     <label htmlFor="name" className="form-label">Name:</label>
                     <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} className="form-control" required />

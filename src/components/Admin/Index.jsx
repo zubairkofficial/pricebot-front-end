@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
+import toast from "react-hot-toast";
+
+
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -10,6 +13,7 @@ const UserTable = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState(null);
   const { roleId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -21,6 +25,9 @@ const UserTable = () => {
       }, 3000);
     }
   }, [location.state]);
+  // useEffect(() => {
+  //   setAlertMessage("");
+  // }, []);
 
   const fetchUsers = async () => {
     try {
@@ -41,45 +48,55 @@ const UserTable = () => {
     setShowConfirmation(true);
   };
 
-  const confirmDelete = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/deleteRole/${roleToDelete}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to delete role");
+ const confirmDelete = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/deleteRole/${roleToDelete}`,
+      {
+        method: "DELETE",
       }
-      setUsers((prevRoles) =>
-        prevRoles.filter((role) => role.id !== roleToDelete)
-      );
-      setAlertMessage("Role deleted successfully.");
-    } catch (error) {
-      console.error("Error deleting role:", error.message);
-      setAlertMessage("Failed to delete role.");
+    );
+    if (!response.ok) {
+      throw new Error("Failed to delete role");
     }
-    setShowConfirmation(false);
-    setTimeout(() => {
-      setAlertMessage("");
-    }, 3000);
-  };
+    setUsers((prevRoles) =>
+      prevRoles.filter((role) => role.id !== roleToDelete)
+    );
+    toast.success('Role deleted successfully.');
+  } catch (error) {
+    console.error("Error deleting role:", error.message);
+    toast.error("Failed to delete role.");
+  }
+  setShowConfirmation(false);
+  setTimeout(() => {
+    setAlertMessage("");
+  }, 5000);
+};
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
+ 
+
+  const handleEdit = (roleId) => {
+    // Any pre-navigation logic can go here
+    navigate(`/Edit/${roleId}`);
+  };
+
+
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4 text-dark text-center">User List</h1>
+      <h1 className="mb-4 text-dark text-center">Benutzerliste
+</h1>
       <div className="row">
         <div className="col-md-2"></div>
         <div className="col-md-10">
           <div className="d-flex justify-content-end mb-3">
             <Link to="/AddUser">
-              <button className="btn btn-primary">Add User</button>
+              <button className="btn btn-primary">Benutzer hinzufügen
+</button>
             </Link>
           </div>
           {alertMessage && (
@@ -91,10 +108,10 @@ const UserTable = () => {
             <table className="table table-bordered table-hover shadow-sm">
               <thead className="table-primary">
                 <tr>
-                  <th>Sr#</th>
+                <th>Sr#</th>
                   <th>Name</th>
-                  <th>Service</th>
-                  <th>Actions</th>
+                  <th>Dienst</th>
+                  <th>Aktionen</th>
                 </tr>
               </thead>
               <tbody>
@@ -104,12 +121,13 @@ const UserTable = () => {
                     <td>{user.name}</td>
                     <td>{user.services.join(", ")}</td>
                     <td>
-                      <button
-                        className="btn btn-outline-secondary me-2"
-                        onClick={() => handleEdit(index)}
-                      >
-                        Edit
-                      </button>
+                    <button
+                      className="btn btn-outline-secondary me-2"
+                      onClick={() => handleEdit(user.id)} // Ensure you are using the correct user identifier
+                    >
+                      Edit
+                    </button>
+
                       <button
                         className="btn btn-outline-danger"
                         onClick={() => handleDelete(user.id)}

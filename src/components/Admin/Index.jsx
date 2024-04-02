@@ -82,94 +82,96 @@ const UserTable = () => {
 
   return (
     <div className="container mt-5">
-    <h1 className="mb-4 text-center" style={{ fontWeight: 'bold', color: '#333' }}>Benutzerliste</h1>
-    <div className="row">
+      <h2 className="text-center" style={{ fontWeight: "bold", color: "#333" }}>
+        Benutzerliste
+      </h2>
+      <div className="row">
         <div className="col-md-2">
-            {/* Sidebar content goes here (if any) */}
+          {/* Sidebar content goes here (if any) */}
         </div>
         <div className="col-md-10">
-          
-            <div className="d-flex justify-content-end mb-3">
-                <div>
-                    <Link to="/AddUser" className="btn btn-success">+ Benutzer hinzufügen</Link>
-                </div>
-                
+          <div className="d-flex justify-content-end mb-3">
+            <div>
+              <Link to="/AddUser" className="btn btn-success">
+                + Benutzer hinzufügen
+              </Link>
             </div>
-            {alertMessage && (
-                <div className="alert alert-success" role="alert">
-                    {alertMessage}
-                </div>
-            )}
-            <div className="card shadow-sm">
-                <div className="card-body">
-                    <div className="table-responsive">
-                        <table className="table table-hover mb-0">
-                        <thead style={{ backgroundColor: '#28a745', color: 'white' }}>
+          </div>
+          {alertMessage && (
+            <div className="alert alert-success" role="alert">
+              {alertMessage}
+            </div>
+          )}
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <div className="table-responsive">
+                <table className="table table-hover mb-0">
+                  <thead style={{ backgroundColor: "", color: "white" }}>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Dienst</th>
+                      <th scope="col">Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((user, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{user.name}</td>
+                        <td>{user.services.join(", ")}</td>
+                        <td>
+                          <button
+                            className="btn btn-primary btn-sm me-2"
+                            onClick={() => handleEdit(user.id)}
+                            title="Editieren"
+                          >
+                            <i className="bi bi-pencil-square"></i>
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleDelete(user.id)}
+                            title="Löschen"
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {/* Pagination Placeholder - Implement pagination logic */}
 
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Dienst</th>
-                                    <th scope="col">Aktionen</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map((user, index) => (
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{user.name}</td>
-                                        <td>{user.services.join(", ")}</td>
-                                        <td>
-                                            <button
-                                                className="btn btn-primary btn-sm me-2"
-                                                onClick={() => handleEdit(user.id)}
-                                                title="Editieren"
-                                            >
-                                                <i className="bi bi-pencil-square"></i>
-                                            </button>
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                onClick={() => handleDelete(user.id)}
-                                                title="Löschen"
-                                            >
-                                                <i className="bi bi-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            {/* Pagination Placeholder - Implement pagination logic */}
-           
-            {/* Confirmation Modal */}
-            <Modal
-                show={showConfirmation}
-                onHide={() => setShowConfirmation(false)}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Bestätigung der Löschung</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Sind Sie sicher, dass Sie diese Rolle löschen möchten?
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowConfirmation(false)}>
-                        Abbrechen
-                    </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
-                        Löschen
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+          {/* Confirmation Modal */}
+          <Modal
+            show={showConfirmation}
+            onHide={() => setShowConfirmation(false)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Bestätigung der Löschung</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Sind Sie sicher, dass Sie diese Rolle löschen möchten?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowConfirmation(false)}
+              >
+                Abbrechen
+              </Button>
+              <Button variant="danger" onClick={confirmDelete}>
+                Löschen
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
+      </div>
     </div>
-</div>
-
-
   );
 };
 

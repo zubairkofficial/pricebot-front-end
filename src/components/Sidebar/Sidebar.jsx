@@ -10,7 +10,9 @@ const Sidebar = () => {
   const [historyData, setHistoryData] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true); // State variable to track sidebar visibility
   const { id } = useParams();
-  const [selectedEmail, setSelectedEmail] = useState('');
+  const [selectedEmail, setSelectedEmail] = useState("");
+  const [showId , setShowId] = useState('') ;
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +24,15 @@ const Sidebar = () => {
       } catch (error) {
         console.error("Error fetching latest PDF data:", error);
       }
+
+      
+      const userId = localStorage.getItem('user_Login_Id');
+  
+      // Construct the link dynamically. If there's no ID, the link will just be to '/Settings'
+      const settingsLink = userId ? `/Settings/${userId}` : '/Settings';
     };
+
+    
 
     const fetchDataById = async (id) => {
       try {
@@ -38,16 +48,14 @@ const Sidebar = () => {
 
     fetchData();
 
-    const name = localStorage.getItem('user_Name');
-    const email = localStorage.getItem('user_Email');
+    const name = localStorage.getItem("user_Name");
+    const email = localStorage.getItem("user_Email");
     if (name) {
       setSelectedModel(name);
     }
     if (email) {
       setSelectedEmail(email);
     }
-
-  
   }, []);
 
   function logout() {
@@ -68,6 +76,10 @@ const Sidebar = () => {
   function toggleSidebar() {
     setSidebarOpen(!sidebarOpen);
   }
+  
+
+ 
+
 
   return (
     <div>
@@ -94,7 +106,7 @@ const Sidebar = () => {
             transform: "translateY(-50%)",
             left: sidebarOpen ? "240px" : "10px", // Adjusted position
             backgroundColor: "transparent",
-            border: "none", 
+            border: "none",
             outline: "none",
             cursor: "pointer",
             fontSize: "25px",
@@ -172,6 +184,20 @@ const Sidebar = () => {
                   </span>
                 </Link>
               </li>
+
+              <li className="pc-item pc-hasmenu">
+                <Link to="/Settings" className="pc-link">
+                  <span className="pc-micon">
+                    {/* Using FontAwesome for a settings gear icon */}
+                    <i className="fas fa-cog pc-icon"></i>
+                  </span>
+                  <span className="pc-mtext">Einstellungen</span>
+                  <span className="pc-arrow">
+                    <i className="fas fa-chevron-right"></i>
+                  </span>
+                </Link>
+              </li>
+
               {/* Dropdown Tab for History */}
               <li className="pc-item pc-hasmenu">
                 <div

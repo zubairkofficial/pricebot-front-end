@@ -34,6 +34,7 @@ import AddUser2 from "./pages/Admin2/AddUser2";
 import AdminLogin from "./components/Auth/Login/AdminLogin";
 import Role2 from './pages/Admin2/Role2';
 import Edit2 from './pages/Admin2/Edit2';
+import Settings2 from './pages/Settings2';
 
 function App() {
   const router = createBrowserRouter([
@@ -120,6 +121,10 @@ function App() {
     {
       path: "/Edit/:roleId",
       element: < Edit2 />,
+    },
+    {
+      path: "/Settings",
+      element: < Settings2 />,
     },
   ]);
 

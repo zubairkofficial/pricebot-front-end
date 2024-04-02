@@ -1,8 +1,8 @@
 class Helpers{
     static appName = "Nuance";
     static localhost = '127.0.0.1:8000';
-    static server = 'pricebotapi.martinmobiles.com';
-    static basePath = `//${this.localhost}`;
+    static server = 'apipricebot.cyberify.co';
+    static basePath = `//${this.server}`;
     static apiUrl = `${this.basePath}/api/`;
     
     static authUser = JSON.parse(localStorage.getItem('user')) || {};

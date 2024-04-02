@@ -8,6 +8,9 @@ import Footer from "../components/Footer/Footer";
 import Offcanvas from "../components/Offcanvas/Offcanvas";
 import { useNavigate } from "react-router-dom";
 import Sidebar2 from "../components/Sidebar/Sidebae2";
+import List from "../components/List";
+import SettingsPage from "../components/Dasboard/Settings";
+
 const Index = () => {
   const navigate = useNavigate();
 
@@ -24,21 +27,13 @@ const Index = () => {
   }, []);
 
   React.useEffect(() => {
-    const userServices = JSON.parse(localStorage.getItem("user_Services"));
-    if (userServices && userServices.includes("Preisbot")) {
-        const userLoginId = localStorage.getItem("user_Login_Id");
-        if (userLoginId) {
-            navigate('/');
-        } else {
-            navigate('/registration');
-        }
+    const user_Login_Id = localStorage.getItem("user_Login_Id");
+    if (user_Login_Id) {
+      navigate('/Settings');
     } else {
-        // If user does not have access to this page, redirect them to another page
-        navigate('/List');
+      navigate('/registration');
     }
-}, [navigate]);
-
-  
+  }, [navigate]);
 
   return (
     <>
@@ -53,8 +48,8 @@ const Index = () => {
         {/* <!-- [ Sidebar Menu ] start --> */}
         <Sidebar />
         {/* <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start --> */}
-        <Header />
-        <FileUpload 
+        
+        <SettingsPage
        
         />
         

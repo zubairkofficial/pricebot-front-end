@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import toast from "react-hot-toast";
 
-
-
 const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,119 +46,130 @@ const UserTable = () => {
     setShowConfirmation(true);
   };
 
- const confirmDelete = async () => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/deleteRole/${roleToDelete}`,
-      {
-        method: "DELETE",
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/deleteRole/${roleToDelete}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete role");
       }
-    );
-    if (!response.ok) {
-      throw new Error("Failed to delete role");
+      setUsers((prevRoles) =>
+        prevRoles.filter((role) => role.id !== roleToDelete)
+      );
+      toast.success("Role deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting role:", error.message);
+      toast.error("Failed to delete role.");
     }
-    setUsers((prevRoles) =>
-      prevRoles.filter((role) => role.id !== roleToDelete)
-    );
-    toast.success('Role deleted successfully.');
-  } catch (error) {
-    console.error("Error deleting role:", error.message);
-    toast.error("Failed to delete role.");
-  }
-  setShowConfirmation(false);
-  setTimeout(() => {
-    setAlertMessage("");
-  }, 5000);
-};
+    setShowConfirmation(false);
+    setTimeout(() => {
+      setAlertMessage("");
+    }, 5000);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
   }
-
- 
 
   const handleEdit = (roleId) => {
     // Any pre-navigation logic can go here
     navigate(`/Edit/${roleId}`);
   };
 
-
-
   return (
     <div className="container mt-5">
-      <h1 className="mb-4 text-dark text-center">Benutzerliste
-</h1>
-      <div className="row">
-        <div className="col-md-2"></div>
-        <div className="col-md-10">
-          <div className="d-flex justify-content-end mb-3">
-            <Link to="/AddUser">
-              <button className="btn btn-primary">Benutzer hinzufügen
-</button>
-            </Link>
-          </div>
-          {alertMessage && (
-            <div className="alert alert-success" role="alert">
-              {alertMessage}
-            </div>
-          )}
-          <div className="table-responsive">
-            <table className="table table-bordered table-hover shadow-sm">
-              <thead className="table-primary">
-                <tr>
-                <th>Sr#</th>
-                  <th>Name</th>
-                  <th>Dienst</th>
-                  <th>Aktionen</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{user.name}</td>
-                    <td>{user.services.join(", ")}</td>
-                    <td>
-                    <button
-                      className="btn btn-outline-secondary me-2"
-                      onClick={() => handleEdit(user.id)} // Ensure you are using the correct user identifier
-                    >
-                      Edit
-                    </button>
-
-                      <button
-                        className="btn btn-outline-danger"
-                        onClick={() => handleDelete(user.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {/* Confirmation Modal */}
-            <Modal show={showConfirmation} onHide={() => setShowConfirmation(false)}>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirm Deletion</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                Are you sure you want to delete this role?
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowConfirmation(false)}>
-                  Cancel
-                </Button>
-                <Button variant="danger" onClick={confirmDelete}>
-                  Delete
-                </Button>
-              </Modal.Footer>
-            </Modal>
-            {/* Pagination here if necessary */}
-          </div>
+    <h1 className="mb-4 text-center" style={{ fontWeight: 'bold', color: '#333' }}>Benutzerliste</h1>
+    <div className="row">
+        <div className="col-md-2">
+            {/* Sidebar content goes here (if any) */}
         </div>
-      </div>
+        <div className="col-md-10">
+          
+            <div className="d-flex justify-content-end mb-3">
+                <div>
+                    <Link to="/AddUser" className="btn btn-success">+ Benutzer hinzufügen</Link>
+                </div>
+                
+            </div>
+            {alertMessage && (
+                <div className="alert alert-success" role="alert">
+                    {alertMessage}
+                </div>
+            )}
+            <div className="card shadow-sm">
+                <div className="card-body">
+                    <div className="table-responsive">
+                        <table className="table table-hover mb-0">
+                        <thead style={{ backgroundColor: '#28a745', color: 'white' }}>
+
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Dienst</th>
+                                    <th scope="col">Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {users.map((user, index) => (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{user.name}</td>
+                                        <td>{user.services.join(", ")}</td>
+                                        <td>
+                                            <button
+                                                className="btn btn-primary btn-sm me-2"
+                                                onClick={() => handleEdit(user.id)}
+                                                title="Editieren"
+                                            >
+                                                <i className="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => handleDelete(user.id)}
+                                                title="Löschen"
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {/* Pagination Placeholder - Implement pagination logic */}
+           
+            {/* Confirmation Modal */}
+            <Modal
+                show={showConfirmation}
+                onHide={() => setShowConfirmation(false)}
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Bestätigung der Löschung</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Sind Sie sicher, dass Sie diese Rolle löschen möchten?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowConfirmation(false)}>
+                        Abbrechen
+                    </Button>
+                    <Button variant="danger" onClick={confirmDelete}>
+                        Löschen
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </div>
     </div>
+</div>
+
+
   );
 };
 

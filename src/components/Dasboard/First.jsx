@@ -30,7 +30,7 @@ const FileUpload = () => {
       img: "1.webp",
     },
     {
-      id: "Voice-Assistant",
+      id: "Record-mail",
       name: "Protokoll",
       description: "Erstelle automatisch Protokolle aus Memos",
       img: "2.webp",

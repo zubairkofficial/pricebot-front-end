@@ -35,6 +35,8 @@ import AdminLogin from "./components/Auth/Login/AdminLogin";
 import Role2 from './pages/Admin2/Role2';
 import Edit2 from './pages/Admin2/Edit2';
 import Settings2 from './pages/Settings2';
+import Listmail2 from './pages/Listmail2';
+import Resend2 from './pages/Resend2';
 
 function App() {
   const router = createBrowserRouter([
@@ -125,6 +127,16 @@ function App() {
     {
       path: "/Settings",
       element: < Settings2 />,
+    },
+
+    {
+      path: "Record-mail",
+      element: < Listmail2 />,
+    },
+
+    {
+      path: "Resend-Email/:userId",
+      element: < Resend2 />,
     },
   ]);
 

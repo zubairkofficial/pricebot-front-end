@@ -36,7 +36,7 @@ const FileUpload = () => {
       img: "2.webp",
     },
     {
-      id: "#",
+      id: "Invoices",
       name: "Preishistorie",
       description: "Suche nach Preisen in vergangenen Daten",
       img: "4.webp",

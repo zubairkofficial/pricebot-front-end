@@ -37,6 +37,8 @@ import Edit2 from './pages/Admin2/Edit2';
 import Settings2 from './pages/Settings2';
 import Listmail2 from './pages/Listmail2';
 import Resend2 from './pages/Resend2';
+import Invoice2 from './pages/Invoice/Invoice2';
+import GetData2 from './pages/Invoice/GetData2';
 
 function App() {
   const router = createBrowserRouter([
@@ -137,6 +139,17 @@ function App() {
     {
       path: "Resend-Email/:userId",
       element: < Resend2 />,
+    },
+
+    {
+      path: "Invoices",
+      element: < Invoice2 />,
+    },
+
+
+    {
+      path: "invoice-details",
+      element: < GetData2 />,
     },
   ]);
 

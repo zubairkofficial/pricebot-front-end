@@ -4,9 +4,6 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 
-// Assuming Sidebar is correctly imported
-// import Sidebar from "../Sidebar/Sidebar";
-
 const FileUpload = () => {
   const [userServices, setUserServices] = useState([]);
 
@@ -28,19 +25,27 @@ const FileUpload = () => {
       name: "Preisbot",
       description: "Pricebot automatisiert die Preisverfolgung",
       img: "1.webp",
+      link: "/preisbot"
     },
     {
       id: "Record-mail",
       name: "Protokoll",
       description: "Erstelle automatisch Protokolle aus Memos",
       img: "2.webp",
+      link: "/protokoll"
     },
     {
-      id: "Invoices",
+      id: "Past-invoices",
       name: "Preishistorie",
       description: "Suche nach Preisen in vergangenen Daten",
       img: "4.webp",
+      link: "/preishistorie"
     },
+    {
+      name: "Finde Lieferscheine mit",
+      description: "manuellen Änderungen",
+      img: "6.jpg"
+    }
   ];
 
   // Check if a service is enabled or if the userServices array is empty
@@ -68,11 +73,49 @@ const FileUpload = () => {
             <Row className="mb-4 g-4 pt-4">
               {services.map((service) => (
                 <Col lg={4} key={service.id}>
-                  <Link
-                    to={isServiceEnabled(service.name) ? `/${service.id}` : "#"}
-                    className="text-decoration-none"
-                    style={{ position: "relative" }}
-                  >
+                  {service.id && service.link ? (
+                    <Link
+                      to={isServiceEnabled(service.name) ? `/${service.id}` : "#"}
+                      className="text-decoration-none"
+                      style={{ position: "relative" }}
+                    >
+                      <Card
+                        className={`shadow-sm ${
+                          isServiceEnabled(service.name) ? "" : "disabled"
+                        }`}
+                        style={{
+                          cursor: "pointer",
+                          borderRadius: "0.75rem",
+                          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("../assets/images/${service.img}")`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          color: "white",
+                          height: "180px",
+                          opacity: isServiceEnabled(service.name) ? 0.9 : 0.5, // Adjust opacity to indicate disabled
+                        }}
+                      >
+                        {!isServiceEnabled(service.name) && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faLock} size="2x" />
+                          </div>
+                        )}
+                        <Row />
+                        <Card.Body className="d-flex flex-column ">
+                          <Card.Title style={{ color: "white" }}>
+                            {service.name}
+                          </Card.Title>
+                          <Card.Text>{service.description}</Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </Link>
+                  ) : (
                     <Card
                       className={`shadow-sm ${
                         isServiceEnabled(service.name) ? "" : "disabled"
@@ -108,7 +151,7 @@ const FileUpload = () => {
                         <Card.Text>{service.description}</Card.Text>
                       </Card.Body>
                     </Card>
-                  </Link>
+                  )}
                 </Col>
               ))}
             </Row>

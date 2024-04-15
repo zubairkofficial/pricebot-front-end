@@ -39,6 +39,7 @@ import Listmail2 from './pages/Listmail2';
 import Resend2 from './pages/Resend2';
 import Invoice2 from './pages/Invoice/Invoice2';
 import GetData2 from './pages/Invoice/GetData2';
+import Pastinvoices2 from './pages/Invoice/Pastinvoice2';
 
 function App() {
   const router = createBrowserRouter([
@@ -150,6 +151,11 @@ function App() {
     {
       path: "invoice-details",
       element: < GetData2 />,
+    },
+
+    {
+      path: "Past-invoices",
+      element: < Pastinvoices2 />,
     },
   ]);
 

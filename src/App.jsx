@@ -143,7 +143,7 @@ function App() {
     },
 
     {
-      path: "Invoices",
+      path: "Delivery-Bills",
       element: < Invoice2 />,
     },
 

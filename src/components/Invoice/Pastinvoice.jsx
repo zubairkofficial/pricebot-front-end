@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BsX } from 'react-icons/bs'; // Import the cross icon
+import toast  from 'react-hot-toast';
+
+
 
 function Invoice() {
   const [files, setFiles] = useState([null]); // Initialize with one file input
   const [titles, setTitles] = useState(['']); // Initialize with one title input
   const [uploading, setUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   const handleFileChange = (event, index) => {
@@ -26,8 +30,6 @@ function Invoice() {
     setTitles([...titles, '']); // Add a new title input
   };
 
-  
-
   const handleRemoveFileInput = (index) => {
     const newFiles = [...files];
     newFiles.splice(index, 1); // Remove file input at the specified index
@@ -36,31 +38,33 @@ function Invoice() {
     newTitles.splice(index, 1); // Remove title input at the specified index
     setTitles(newTitles);
   };
+
+ 
   const sendInvoiceData = async () => {
     try {
       setUploading(true);
       setErrorMessage('');
+      setSuccessMessage('');
   
-      const formData = new FormData();
+      // Iterate over each file
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
+        const title = titles[index];
   
-      // Iterate over both files and titles arrays simultaneously
-      files.forEach((file, index) => {
-        formData.append(`pdf`, file); // Append file
-        formData.append(`title`, titles[index]); // Append corresponding title
-      });
+        const formData = new FormData();
+        formData.append('pdf', file);
+        formData.append('title', title);
   
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/postinvoice`, {
-        method: 'POST',
-        body: formData,
-      });
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/postinvoice`, {
+          method: 'POST',
+          body: formData,
+        });
   
-      if (!response.ok) throw new Error('Network response was not successful.');
+        if (!response.ok) throw new Error('Network response was not successful.');
+      }
   
-      const responseData = await response.json();
-      console.log('Response Data:', responseData);
-  
-      // Show success message
-      alert('Invoices uploaded successfully.');
+      // Show a single success toast after all invoices are uploaded
+      toast.success('Invoices uploaded successfully', { duration: 3000 }); // 3 seconds duration
   
       // Clear input fields after successful upload
       setFiles([null]);
@@ -68,19 +72,14 @@ function Invoice() {
   
     } catch (error) {
       console.error('Error uploading the invoices:', error);
-      // Show error message
-      setErrorMessage('Error uploading the invoices.');
+      // Show error toast
+      toast.error('Error uploading the invoices');
     } finally {
       setUploading(false);
     }
   };
   
-  
-  
-  
-  
-  
-  
+
 
   const handleNextPageClick = (data) => {
     navigate('/invoice-details', { state: { data } });
@@ -88,19 +87,24 @@ function Invoice() {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Past Invoices</h2>
+      <h2 className="text-center mb-4">Vergleichen mit Lieferung</h2> {/* Translate "Compare with Delivery" */}
+      <div className="row justify-content-between align-items-end">
+        <div className="col-md-6"></div>
+        <div className="col-md-6 d-flex justify-content-end">
+          <Link  to={'/Delivery-Bills'} className='btn btn-outline-primary align-items-center m-3'>Vergleichen mit Lieferung Rechnungen</Link> {/* Translate "Compare with Delivery bills" */}
+        </div>
+      </div>
       <div className="row justify-content-center">
         <div className="col-md-2"></div>
         <div className="col-md-10">
           {files.map((file, index) => (
             <div key={index} className="mb-3">
               <div className="d-flex align-items-center">
-               
                 <input
                   type="text"
                   value={titles[index]}
                   onChange={(event) => handleTitleChange(event, index)}
-                  placeholder="Enter product name"
+                  placeholder="Produktname eingeben"
                   className="form-control mb-3"
                   required
                 />
@@ -123,12 +127,16 @@ function Invoice() {
               />
             </div>
           ))}
-          <button onClick={handleAddFileInput} className="btn btn-secondary mb-3 float-end">
-            Add File
+          <button
+            onClick={handleAddFileInput}
+            className="btn btn-secondary mb-3 float-end"
+          >
+            Datei hinzufügen {/* Translate "Add File" */}
           </button>
-          <div style={{ color: 'red', marginTop: '5px', fontSize: '14px' }}>{errorMessage}</div>
+          {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
+          {successMessage && <div className="alert alert-success" role="alert">{successMessage}</div>}
           <button onClick={sendInvoiceData} className="btn btn-primary mb-3" disabled={uploading}>
-            {uploading ? 'Uploading...' : 'Upload Invoices'}
+            {uploading ? 'Wird hochgeladen...' : 'Rechnungen hochladen'} {/* Translate "Upload Invoices" */}
           </button>
         </div>
       </div>

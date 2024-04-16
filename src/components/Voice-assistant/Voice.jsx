@@ -17,11 +17,13 @@ function Dashboard() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
+      recognition.lang = 'de-DE'; // Set language to German
+  
       recognition.continuous = true;
       recognition.interimResults = true;
-
+  
       recognition.onstart = () => console.log('Speech recognition activated. Please speak.');
-
+  
       recognition.onresult = (event) => {
         const transcript = Array.from(event.results)
           .map(result => result[0])
@@ -29,18 +31,19 @@ function Dashboard() {
           .join('');
         setListeningText(transcript);
       };
-
+  
       recognition.onerror = (event) => console.error('Error during recognition:', event.error);
-
+  
       if (isListening) {
         recognition.start();
       } else {
         recognition.stop();
       }
-
+  
       return () => recognition.stop();
     }
   }, [isListening]);
+  
 
   const handleListen = () => setIsListening(!isListening);
 

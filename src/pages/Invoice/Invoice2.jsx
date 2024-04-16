@@ -30,7 +30,7 @@ const Index = () => {
   React.useEffect(() => {
     const user_Login_Id = localStorage.getItem("user_Login_Id");
     if (user_Login_Id) {
-      navigate('/Invoices');
+      navigate('/Delivery-Bills');
     } else {
       navigate('/registration');
     }

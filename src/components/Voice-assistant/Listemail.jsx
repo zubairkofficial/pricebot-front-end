@@ -20,7 +20,7 @@ const SentEmails = () => {
         setFilteredEmails(response.data.emails);
         setIsLoading(false);
       } catch (error) {
-        setError("Failed to fetch sent emails");
+        setError("Fehler beim Abrufen gesendeter E-Mails");
         setIsLoading(false);
       }
     };
@@ -52,15 +52,15 @@ const SentEmails = () => {
               <Col xs={12}>
                 <div className="mb-3">
                   <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 className="flex-grow-1">Sent Emails</h2>
+                    <h2 className="flex-grow-1">Gesendete E-Mails</h2>
                     <InputGroup size="sm" className="mr-3" style={{ maxWidth: '300px' }}>
                       <FormControl
-                        placeholder="Search by name or title..."
-                        aria-label="Search"
+                        placeholder="Nach Name oder Titel suchen..."
+                        aria-label="Suche"
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
                     </InputGroup>
-                    <Link to="/voice-assistant" className="btn btn-primary ms-2">Voice Assistant</Link>
+                    <Link to="/voice-assistant" className="btn btn-primary ms-2">Sprachassistent</Link>
                   </div>
                 </div>
                 <Card className="shadow bg-white rounded">
@@ -68,7 +68,7 @@ const SentEmails = () => {
                     {isLoading ? (
                       <div className="text-center py-3">
                         <Spinner animation="border" role="status">
-                          <span className="visually-hidden">Loading...</span>
+                          <span className="visually-hidden">Laden...</span>
                         </Spinner>
                       </div>
                     ) : error ? (
@@ -81,7 +81,7 @@ const SentEmails = () => {
                               <div><strong>{email.title}</strong></div>
                               <div>{email.transcriptionText.substring(0, 70)}{email.transcriptionText.length > 70 && '...'}</div>
                               {email.transcriptionText.length > 70 && (
-                                <div className="text-muted">Show full email</div>
+                                <div className="text-muted">Vollständige E-Mail anzeigen</div>
                               )}
                             </div>
                             <small>{email.name}</small>

@@ -8,6 +8,7 @@ function InvoiceDetails() {
   const [postInvoiceData, setPostInvoiceData] = useState(null);
   const [matchedData, setMatchedData] = useState([]);
   const [selectedInvoice, setSelectedInvoice] = useState(null); // Track the selected invoice
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (state && state.data) {
@@ -17,11 +18,11 @@ function InvoiceDetails() {
       fetch(`${import.meta.env.VITE_API_URL}/compareInvoices`)
         .then(response => response.json())
         .then(data => {
-          // console.log('Daten vom API erhalten:', data); // Log the data received from the API
           setData(data);
           fetchPostInvoiceData(data.matched_invoices);
         })
-        .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+        .catch(error => console.error('Fehler beim Abrufen der Daten:', error))
+        .finally(() => setLoading(false));
     }
   }, [state]);
   
@@ -29,17 +30,14 @@ function InvoiceDetails() {
     fetch(`${import.meta.env.VITE_API_URL}/compareInvoices`)
       .then(response => response.json())
       .then(postData => {
-        // console.log('Nachrechnungsdaten:', postData); // Log the data received from the API
         setPostInvoiceData(postData.matched_invoices);
-
-        // Compare the invoice data and post invoice data
         const matchedValues = compareData(invoiceData, postData.matched_invoices);
         setMatchedData(matchedValues);
       })
-      .catch(error => console.error('Fehler beim Abrufen der Nachrechnungsdaten:', error));
+      .catch(error => console.error('Fehler beim Abrufen der Nachrechnungsdaten:', error))
+      .finally(() => setLoading(false));
   };
   
-  // Function to compare the invoice data and post invoice data
   const compareData = (invoiceData, postData) => {
     const matchedValues = [];
     postData.forEach((postInvoice, index) => {
@@ -57,7 +55,7 @@ function InvoiceDetails() {
           date: matchedInvoice.date,
           due_date: matchedInvoice.due_date,
           matched: true,
-          ...postInvoice // Include all postInvoice details
+          ...postInvoice
         });
       } else {
         matchedValues.push({
@@ -66,16 +64,13 @@ function InvoiceDetails() {
           date: postInvoice.date,
           due_date: postInvoice.due_date,
           matched: false,
-          ...postInvoice // Include all postInvoice details
+          ...postInvoice
         });
       }
     });
-
-    console.log('Eingehende übereinstimmende Werte:', matchedValues);
     return matchedValues;
   };
 
-  // Function to handle modal open
   const openModal = (invoice) => {
     setSelectedInvoice(invoice);
     const modalElement = document.getElementById('invoiceModal');
@@ -84,7 +79,6 @@ function InvoiceDetails() {
     document.body.classList.add('modal-open');
   };
 
-  // Function to handle modal close
   const closeModal = () => {
     setSelectedInvoice(null);
     const modalElement = document.getElementById('invoiceModal');
@@ -93,7 +87,6 @@ function InvoiceDetails() {
     document.body.classList.remove('modal-open');
   };
 
-  // Render your component
   return (
     <div className="container mt-5">
       <h2 className='text-center'>Rechnungsvergleich</h2>
@@ -106,7 +99,13 @@ function InvoiceDetails() {
 
         {/* Content */}
         <div className="col-md-10">
-          {matchedData.length > 0 ? (
+          {loading ? (
+            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : matchedData.length > 0 ? (
             <div className="row row-cols-1 row-cols-md-3 g-4">
               {matchedData.map((matchedValue, index) => (
                 <div className="col" key={index}>
@@ -116,7 +115,11 @@ function InvoiceDetails() {
                     </div>
                     <div className="card-body">
                       <p><strong>Titel:</strong> {matchedValue.title}</p>
-                      <p><strong>Produkt:</strong> {matchedValue.category}</p>
+                      {/* <p><strong>Produkt:</strong> {selectedInvoice.description}</p> */}
+                  <p><strong>Produkt:</strong> {matchedValue.description}</p>
+
+
+                      <p><strong>Kategorie</strong> {matchedValue.category}</p>
                       <p><strong>Datum:</strong> {matchedValue.date}</p>
                       <p><strong>Fälligkeitsdatum:</strong> {matchedValue.due_date}</p>
                       {matchedValue.matched ? (
@@ -135,7 +138,11 @@ function InvoiceDetails() {
               ))}
             </div>
           ) : (
-            <p className="text-center mt-5">Keine Übereinstimmung gefunden.</p>
+            <p className="text-center mt-5 error-message">
+            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+            Keine Übereinstimmung gefunden.
+          </p>
+          
           )}
         </div>
       </div>
@@ -158,7 +165,7 @@ function InvoiceDetails() {
                   <p><strong>Datum:</strong> {selectedInvoice.date}</p>
                   <p><strong>Fälligkeitsdatum:</strong> {selectedInvoice.due_date}</p>
                   <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p>
-                  <p><strong>Beschreibung:</strong> {selectedInvoice.description}</p>
+                  <p><strong>Produkt:</strong> {selectedInvoice.description}</p>
                   <p><strong>Steuer:</strong> {selectedInvoice.tax}</p>
                   <p><strong>Teilsumme:</strong> {selectedInvoice.subtotal}</p>
                   <p><strong>Gesamtsumme:</strong> {selectedInvoice.total}</p>

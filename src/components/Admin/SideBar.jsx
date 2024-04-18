@@ -166,19 +166,19 @@ const Sidebar = () => {
                 </Link>
               </li>
 
-              {/* <li className="pc-item pc-hasmenu">
-                <Link to="/Select-Role" className="pc-link">
+              <li className="pc-item pc-hasmenu">
+                <Link to="/admin-settings" className="pc-link">
                   <span className="pc-micon">
                     <svg className="pc-icon">
                       <use xlinkHref="#custom-status-up"></use>
                     </svg>
                   </span>
-                  <span className="pc-mtext">Rolle und Berechtigungen</span>
+                  <span className="pc-mtext">Einstellungen</span>
                   <span className="pc-arrow">
                     <i data-feather="chevron-right"></i>
                   </span>
                 </Link>
-              </li> */}
+              </li>
               {/* 
               <li className="pc-item pc-hasmenu">
                 <Link to="/AddUser" className="pc-link">

@@ -28,7 +28,7 @@ function TranscriptionForm() {
         setError("");
         setSuccess("");
       } catch (err) {
-        setError("Failed to fetch email data");
+        setError("Fehler beim Abrufen der E-Mail-Daten");
         console.error(err);
       } finally {
         setLoading(false);
@@ -50,10 +50,10 @@ function TranscriptionForm() {
         email,
         transcriptionText: combinedText,
       });
-      setSuccess("Transcription sent successfully!");
+      setSuccess("Transkription erfolgreich gesendet!");
       setError("");
     } catch (err) {
-      setError("Failed to send transcription");
+      setError("Senden der Transkription fehlgeschlagen");
       setSuccess("");
       console.error(err);
     } finally {
@@ -72,7 +72,7 @@ function TranscriptionForm() {
         <div className="col-md-7">
           <div className="card">
             <div className="card-body">
-              <h2 className="text-center mb-4">Emails Details</h2>
+              <h2 className="text-center mb-4">E-Mail-Details</h2>
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
@@ -88,7 +88,7 @@ function TranscriptionForm() {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="title" className="form-label">
-                    Title:
+                    Titel:
                   </label>
                   <input
                     type="text"
@@ -100,19 +100,19 @@ function TranscriptionForm() {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">
-                    Email:
+                    E-Mail:
                   </label>
                   <input
                     type="email"
                     id="email"
-                
+                    value={email}
                     className="form-control"
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="transcription" className="form-label">
-                    Transcription:
+                    Transkription:
                   </label>
                   <textarea
                     id="transcription"
@@ -127,15 +127,14 @@ function TranscriptionForm() {
                   className="btn btn-primary mt-4"
                   disabled={loading}
                 >
-                  {loading ? "Bitte warten..." : "Send Transcription"}
+                  {loading ? "Bitte warten..." : "Transkription senden"}
                 </button>
-              
                 <button
                   type="button"
                   className="btn btn-danger ms-2 mt-4"
                   onClick={back}
                 >
-                  Cancel
+                  Abbrechen
                 </button>
                 {success && <div className="text-success mt-2">{success}</div>}
                 {error && <div className="text-danger mt-2">{error}</div>}

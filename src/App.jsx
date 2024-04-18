@@ -40,6 +40,8 @@ import Resend2 from './pages/Resend2';
 import Invoice2 from './pages/Invoice/Invoice2';
 import GetData2 from './pages/Invoice/GetData2';
 import Pastinvoices2 from './pages/Invoice/Pastinvoice2';
+import History2 from './pages/Invoice/History2';
+import Recordedtextmail2 from './pages/Recordedtextmail2'; 
 
 function App() {
   const router = createBrowserRouter([
@@ -119,7 +121,7 @@ function App() {
       element: <AddUser2 />,
     }, 
     {
-      path: "/Select-Role",
+      path: "admin-settings",
       element: < Role2 />,
     },
 
@@ -156,6 +158,15 @@ function App() {
     {
       path: "Past-invoices",
       element: < Pastinvoices2 />,
+    },
+    {
+      path: "Records",
+      element: <History2/>,
+    },
+
+    {
+      path: "Recorded-text-mail",
+      element: <Recordedtextmail2/>,
     },
   ]);
 

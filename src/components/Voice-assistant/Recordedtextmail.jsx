@@ -10,8 +10,6 @@ function TranscriptionForm() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [combinedText, setCombinedText] = useState('');
-  const [text, setText] = useState('');
-  const [summary, setSummary] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -21,25 +19,21 @@ function TranscriptionForm() {
       setName(location.state.name || '');
       setTitle(location.state.title || '');
       setEmail(location.state.email || '');
-      setText(location.state.text || ''); // Use text prop instead of transcriptionText
-      setSummary(location.state.summary || ''); // Use summary prop instead of transcriptionSummary
+      setCombinedText(`${location.state.listeningText || ''}\n\nSummary:\n${location.state.summary || ''}`);
     }
   }, [location.state]);
-
-  // Combine text and summary into one field
-  useEffect(() => {
-    setCombinedText(`${text}\n\nZusammenfassung:\n${summary}`);
-  }, [text, summary]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/sendEmail`, {
+      // Simulate sending an email with the listening text and summary
+      // Replace this with your actual API call
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/sendEmail2`, {
         title,
         name,
         email,
-        transcriptionText: combinedText,
+        listeningText: combinedText,
       });
       setSuccess(true);
       // Redirect to Voice Assistant page after 5 seconds
@@ -109,11 +103,11 @@ function TranscriptionForm() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="transcription" className="form-label">
-                      Transkriptionstext:
+                    <label htmlFor="combinedText" className="form-label">
+                    Gehörter Text:
                     </label>
                     <textarea
-                      id="transcription"
+                      id="combinedText"
                       value={combinedText}
                       onChange={(e) => setCombinedText(e.target.value)}
                       className="form-control"

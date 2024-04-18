@@ -1,21 +1,20 @@
 import React from "react";
-import FileUpload from "../../components/FileUpload/FileUpload";
-import Helpers from "../../Helpers/Helpers";
-import Loader from "../../components/Loader/Loader";
-import Sidebar from "../../components/Sidebar/Sidebar";
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
-import Offcanvas from "../../components/Offcanvas/Offcanvas";
+import FileUpload from "../components/FileUpload/FileUpload";
+import Helpers from "../Helpers/Helpers";
+import Loader from "../components/Loader/Loader";
+import Sidebar from "../components/Sidebar/Sidebar";
+import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
+import Offcanvas from "../components/Offcanvas/Offcanvas";
 import { useNavigate } from "react-router-dom";
-import Sidebar2 from "../../components/Sidebar/Sidebae2";
-import First from '../../components/Dasboard/First';
-import Index from '../../components/Admin/Index';
-import SideBar from '../../components/Admin/SideBar';
-import Role from '../../components/Admin/Role';
+import Sidebar2 from "../components/Sidebar/Sidebae2";
+import List from "../components/List";
+import Listmail from '../components/Voice-assistant/Listemail'
+import Resend from '../components/Voice-assistant/Resend';
+import Recordedtextmail from '../components/Voice-assistant/Recordedtextmail';
 
 
-
-const Index2 = () => {
+const Index = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -30,14 +29,14 @@ const Index2 = () => {
       .catch((error) => console.error("Script loading failed: ", error));
   }, []);
 
- React.useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role === "1") {
-      navigate('/admin-settings');
-    } else {
-      navigate('/Admin-Login');
-    }
-  }, [navigate]);
+  // React.useEffect(() => {
+  //   const user_Login_Id = localStorage.getItem("user_Login_Id");
+  //   if (user_Login_Id) {
+  //     navigate('/');
+  //   } else {
+  //     navigate('/registration');
+  //   }
+  // }, [navigate]);
 
   return (
     <>
@@ -50,14 +49,13 @@ const Index2 = () => {
       >
         <Loader />
         {/* <!-- [ Sidebar Menu ] start --> */}
-        <SideBar />
+        <Sidebar />
         {/* <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start --> */}
-        {/* <Header /> */}
-            <Role
+        
+        <Recordedtextmail
        
         />
         
- 
         <Footer />
         <Offcanvas />
       </body>
@@ -65,4 +63,4 @@ const Index2 = () => {
   );
 };
 
-export default Index2;
+export default Index;

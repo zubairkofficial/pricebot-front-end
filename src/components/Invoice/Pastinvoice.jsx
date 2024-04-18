@@ -87,7 +87,7 @@ function Invoice() {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Vergleichen mit Lieferung</h2> {/* Translate "Compare with Delivery" */}
+      <h2 className="text-center mb-4">Laden Sie frühere Rechnungen hoch</h2> {/* Translate "Compare with Delivery" */}
       <div className="row justify-content-between align-items-end">
         <div className="col-md-6"></div>
         <div className="col-md-6 d-flex justify-content-end">

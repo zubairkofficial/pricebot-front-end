@@ -28,14 +28,14 @@ const FileUpload = () => {
       link: "/preisbot"
     },
     {
-      id: "Record-mail",
+      id: "Voice-Assistant",
       name: "Protokoll",
       description: "Erstelle automatisch Protokolle aus Memos",
       img: "2.webp",
       link: "/protokoll"
     },
     {
-      id: "Past-invoices",
+      id: "Delivery-Bills",
       name: "Preishistorie",
       description: "Suche nach Preisen in vergangenen Daten",
       img: "4.webp",

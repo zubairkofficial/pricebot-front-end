@@ -7,15 +7,15 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Offcanvas from "../../components/Offcanvas/Offcanvas";
 import { useNavigate } from "react-router-dom";
-import Sidebar2 from "../../components/Sidebar/Sidebae2";
+
 import First from '../../components/Dasboard/First';
-import Index from '../../components/Admin/Index';
-import SideBar from '../../components/Admin/SideBar';
-import Role from '../../components/Admin/Role';
+import Invoice from "../../components/Invoice/Invoice";
+import GetData from "../../components/Invoice/GetData";
+import History from "../../components/Invoice/History";
 
 
 
-const Index2 = () => {
+const Index = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -30,12 +30,12 @@ const Index2 = () => {
       .catch((error) => console.error("Script loading failed: ", error));
   }, []);
 
- React.useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role === "1") {
-      navigate('/admin-settings');
+  React.useEffect(() => {
+    const user_Login_Id = localStorage.getItem("user_Login_Id");
+    if (user_Login_Id) {
+      navigate('/Records');
     } else {
-      navigate('/Admin-Login');
+      navigate('/registration');
     }
   }, [navigate]);
 
@@ -50,10 +50,10 @@ const Index2 = () => {
       >
         <Loader />
         {/* <!-- [ Sidebar Menu ] start --> */}
-        <SideBar />
+        <Sidebar />
         {/* <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start --> */}
         {/* <Header /> */}
-            <Role
+            <History
        
         />
         
@@ -65,4 +65,4 @@ const Index2 = () => {
   );
 };
 
-export default Index2;
+export default Index;

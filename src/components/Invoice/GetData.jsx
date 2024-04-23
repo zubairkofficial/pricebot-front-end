@@ -157,32 +157,33 @@ function InvoiceDetails() {
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={closeModal}></button>
                 </div>
                 <div className="modal-body">
-                    {selectedInvoice && (
-                        <>
-                            <p><strong>Titel:</strong> {selectedInvoice.title}</p>
-                            <p><strong>Rechnungsnummer:</strong> {selectedInvoice.invoice_number}</p>
-                            <p><strong>Kategorie:</strong> {selectedInvoice.category}</p>
-                            <p><strong>Währungscode:</strong> {selectedInvoice.currency_code}</p>
-                            <p><strong>Datum:</strong> {selectedInvoice.date}</p>
-                            <p><strong>Fälligkeitsdatum:</strong> {selectedInvoice.due_date}</p>
-                            <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p>
-                            <p><strong>Produkt:</strong> {selectedInvoice.description}</p>
-                            <p><strong>Steuer:</strong> {selectedInvoice.tax}</p>
-                            <p><strong>Teilsumme:</strong> {selectedInvoice.subtotal}</p>
-                            <p><strong>Gesamtsumme:</strong> {selectedInvoice.total}</p>
+    {selectedInvoice && (
+        <>
+            <p><strong>Titel:</strong> {selectedInvoice.title}</p>
+            <p><strong>Rechnungsnummer:</strong> {selectedInvoice.invoice_number}</p>
+            <p><strong>Kategorie:</strong> {selectedInvoice.category}</p>
+            <p><strong>Währungscode:</strong> {selectedInvoice.currency_code}</p>
+            <p><strong>Datum:</strong> {selectedInvoice.date}</p>
+            <p><strong>Fälligkeitsdatum:</strong> {selectedInvoice.due_date}</p>
+            <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p>
+            <p><strong>Produkt:</strong> {selectedInvoice.description}</p>
+            <p><strong>Steuer:</strong> {Number(selectedInvoice.tax).toLocaleString('de-DE')}%</p>
+            <p><strong>Teilsumme:</strong> {Number(selectedInvoice.subtotal).toLocaleString('de-DE')}</p>
+            <p><strong>Gesamtsumme:</strong> {Number(selectedInvoice.total).toLocaleString('de-DE')}</p>
 
-                            {selectedInvoice.matched ? (
-                                <div className="alert alert-success" role="alert">
-                                    Rechnungsdaten stimmen mit den Nachrechnungsdaten überein.
-                                </div>
-                            ) : (
-                                <div className="alert alert-warning" role="alert">
-                                    Rechnungsdaten stimmen nicht mit den Nachrechnungsdaten überein.
-                                </div>
-                            )}
-                        </>
-                    )}
+            {selectedInvoice.matched ? (
+                <div className="alert alert-success" role="alert">
+                    Rechnungsdaten stimmen mit den Nachrechnungsdaten überein.
                 </div>
+            ) : (
+                <div className="alert alert-warning" role="alert">
+                    Rechnungsdaten stimmen nicht mit den Nachrechnungsdaten überein.
+                </div>
+            )}
+        </>
+    )}
+</div>
+
             </div>
         </div>
     </div>

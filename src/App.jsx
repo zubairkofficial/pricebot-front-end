@@ -42,6 +42,7 @@ import GetData2 from './pages/Invoice/GetData2';
 import Pastinvoices2 from './pages/Invoice/Pastinvoice2';
 import History2 from './pages/Invoice/History2';
 import Recordedtextmail2 from './pages/Recordedtextmail2'; 
+import Getdatawithdate2 from './pages/Invoice/Getdatawithdate2';
 
 function App() {
   const router = createBrowserRouter([
@@ -167,6 +168,9 @@ function App() {
     {
       path: "Recorded-text-mail",
       element: <Recordedtextmail2/>,
+    },{
+      path: "Details-with-date/:uploadDate",
+      element: <Getdatawithdate2/>,
     },
   ]);
 

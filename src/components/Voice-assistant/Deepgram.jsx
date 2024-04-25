@@ -13,6 +13,13 @@ function TranscriptionForm() {
   const [text, setText] = useState('');
   const [summary, setSummary] = useState('');
   const location = useLocation();
+  const [date, setDate] = useState(""); // For Datum
+  const [theme, setTheme] = useState(""); // For Thema
+  const [partnerNumber, setPartnerNumber] = useState(""); // For Gesellschafter
+  const [branchManager, setBranchManager] = useState(""); // For Niederlassungsleiter
+  const [participants, setParticipants] = useState(""); // For Teilnehmer
+  const [author, setAuthor] = useState(""); // For Verfasser
+  const [partnerNumbers, setPartnerNumbers] = useState([]); // For dropdown options
   const navigate = useNavigate();
   
   // Initialize form fields with values from location state
@@ -30,6 +37,21 @@ function TranscriptionForm() {
   useEffect(() => {
     setCombinedText(`${text}\n\nZusammenfassung:\n${summary}`);
   }, [text, summary]);
+
+  // Fetch partner numbers when the component mounts
+  useEffect(() => {
+    const fetchPartnerNumbers = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/getData`);
+        setPartnerNumbers(response.data.data); // Extract the data array from the response object
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+  
+    fetchPartnerNumbers();
+  }, []);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,6 +116,67 @@ function TranscriptionForm() {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Datum:</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Thema:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={theme}
+                      onChange={(e) => setTheme(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Gesellschafternummer:</label>
+                    <select
+  className="form-control"
+  value={partnerNumber}
+  onChange={(e) => setPartnerNumber(e.target.value)}
+>
+  {console.log(partnerNumbers)} {/* Log the partnerNumbers array */}
+  {partnerNumbers.map((partner) => (
+    <option key={partner.id} value={partner.value}>
+      {partner.number}
+    </option>
+  ))}
+</select>
+
+                  </div>
+                  <div className="form-group">
+                    <label>Niederlassungsleiter:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={branchManager}
+                      onChange={(e) => setBranchManager(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Teilnehmer:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={participants}
+                      onChange={(e) => setParticipants(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Verfasser:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={author}
+                      onChange={(e) => setAuthor(e.target.value)}
                     />
                   </div>
                   <div className="mb-3">

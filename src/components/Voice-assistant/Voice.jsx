@@ -12,7 +12,13 @@ function Dashboard() {
   const [transcribing, setTranscribing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [summaryError, setSummaryError] = useState("");
-  const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false); // New state to control email button visibility
+  const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
+  const [date, setDate] = useState(""); // For Datum
+  const [theme, setTheme] = useState(""); // For Thema
+  const [partnerNumber, setPartnerNumber] = useState(""); // For Gesellschafter
+  const [branchManager, setBranchManager] = useState(""); // For Niederlassungsleiter
+  const [participants, setParticipants] = useState(""); // For Teilnehmer
+  const [author, setAuthor] = useState(""); // For Verfasser
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -146,6 +152,8 @@ function Dashboard() {
       <h2 className="text-center mb-4">Protokoll</h2>
       <div className="row justify-content-center m-3">
         <div className="col-md-12">
+
+       
           <div className="d-flex justify-content-between">
             <Link
               to={"/List"}
@@ -163,6 +171,7 @@ function Dashboard() {
       <div className="row justify-content-center">
         <div className="col-md-2"></div>
         <div className="col-md-10">
+        
           <input
             type="file"
             onChange={handleFileChange}

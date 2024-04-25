@@ -58,11 +58,11 @@ const Login = () => {
                   class="text-center"
                 >
                   <a href="#">
-                    <img
+                    {/* <img
                       style={{ height: "100px", width: "100px" }}
                       src={logo}
                       alt="img"
-                    />
+                    /> */}
                   </a>
                   <div class="d-grid my-3"></div>
                 </div>

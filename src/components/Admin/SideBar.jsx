@@ -105,12 +105,12 @@ const Sidebar = () => {
         <div className="navbar-wrapper">
           <div className="m-header">
             <a href="/" className="b-brand text-primary">
-              <img
+              {/* <img
                 style={{ height: "50px", width: "50px" }}
-                src={logo}
+                // src={logo}
                 className="img-fluid logo-lg"
                 alt="logo"
-              />
+              /> */}
             </a>
           </div>
           <div className="navbar-content">

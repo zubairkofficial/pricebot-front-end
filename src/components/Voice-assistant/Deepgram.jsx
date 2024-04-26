@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
+import Select from "react-select";
 
 function TranscriptionForm() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [title, setTitle] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [combinedText, setCombinedText] = useState('');
-  const [text, setText] = useState('');
-  const [summary, setSummary] = useState('');
+  const [combinedText, setCombinedText] = useState("");
+  const [text, setText] = useState("");
+  const [summary, setSummary] = useState("");
   const location = useLocation();
   const [date, setDate] = useState(""); // For Datum
   const [theme, setTheme] = useState(""); // For Thema
@@ -21,15 +22,15 @@ function TranscriptionForm() {
   const [author, setAuthor] = useState(""); // For Verfasser
   const [partnerNumbers, setPartnerNumbers] = useState([]); // For dropdown options
   const navigate = useNavigate();
-  
+
   // Initialize form fields with values from location state
   useEffect(() => {
     if (location.state) {
-      setName(location.state.name || '');
-      setTitle(location.state.title || '');
-      setEmail(location.state.email || '');
-      setText(location.state.text || ''); // Use text prop instead of transcriptionText
-      setSummary(location.state.summary || ''); // Use summary prop instead of transcriptionSummary
+      setName(location.state.name || "");
+      setTitle(location.state.title || "");
+      setEmail(location.state.email || "");
+      setText(location.state.text || ""); // Use text prop instead of transcriptionText
+      setSummary(location.state.summary || ""); // Use summary prop instead of transcriptionSummary
     }
   }, [location.state]);
 
@@ -42,31 +43,35 @@ function TranscriptionForm() {
   useEffect(() => {
     const fetchPartnerNumbers = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/getData`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/getData`
+        );
         setPartnerNumbers(response.data.data); // Extract the data array from the response object
       } catch (error) {
         setError(error.message);
       }
     };
-  
+
     fetchPartnerNumbers();
   }, []);
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/sendEmail`, {
-        title,
-        name,
-        email,
-        transcriptionText: combinedText,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/sendEmail`,
+        {
+          title,
+          name,
+          email,
+          transcriptionText: combinedText,
+        }
+      );
       setSuccess(true);
       // Redirect to Voice Assistant page after 5 seconds
       setTimeout(() => {
-        navigate('/Voice-Assistant');
+        navigate("/Voice-Assistant");
       }, 5000);
     } catch (error) {
       setError(error.message);
@@ -75,9 +80,16 @@ function TranscriptionForm() {
   };
 
   const back = () => {
-    navigate('/Voice-Assistant');
+    navigate("/Voice-Assistant");
   };
+  const options = partnerNumbers.map((partner) => ({
+    value: partner.number,
+    label: partner.number,
+  }));
 
+  const handleChange = (selectedOption) => {
+    setPartnerNumber(selectedOption.value);
+  };
   return (
     <div className="container mt-3">
       <div className="row justify-content-center">
@@ -91,7 +103,9 @@ function TranscriptionForm() {
             <div className="card-body">
               <h2 className="text-center mb-4">Transkriptionsdetails</h2>
               {success ? (
-                <p className="text-center">Transkription erfolgreich an {email} gesendet!</p>
+                <p className="text-center">
+                  Transkription erfolgreich an {email} gesendet!
+                </p>
               ) : (
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
@@ -138,19 +152,12 @@ function TranscriptionForm() {
                   </div>
                   <div className="form-group">
                     <label>Gesellschafternummer:</label>
-                    <select
-  className="form-control"
-  value={partnerNumber}
-  onChange={(e) => setPartnerNumber(e.target.value)}
->
-  {console.log(partnerNumbers)} {/* Log the partnerNumbers array */}
-  {partnerNumbers.map((partner) => (
-    <option key={partner.id} value={partner.value}>
-      {partner.number}
-    </option>
-  ))}
-</select>
-
+                    <Select
+                      className="form-control"
+                      // value={value}
+                      onChange={handleChange}
+                      options={options}
+                    />
                   </div>
                   <div className="form-group">
                     <label>Niederlassungsleiter:</label>
@@ -203,7 +210,11 @@ function TranscriptionForm() {
                       rows={10}
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary mt-4" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary mt-4"
+                    disabled={loading}
+                  >
                     {loading ? "Bitte warten..." : "Transkription senden"}
                   </button>
                   <button className="btn btn-danger ms-2 mt-4" onClick={back}>

@@ -6,7 +6,8 @@ function TranscriptionForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
-  const [combinedText, setCombinedText] = useState("");
+  const [text, setText] = useState(""); // Separate state for text
+  const [summary, setSummary] = useState(""); // Separate state for summary
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -24,7 +25,8 @@ function TranscriptionForm() {
         setName(emailData.name);
         setTitle(emailData.title);
         setEmail(emailData.email);
-        setCombinedText(emailData.transcriptionText);
+        setText(emailData.text); // Set text from API response
+        setSummary(emailData.summary); // Set summary from API response
         setError("");
         setSuccess("");
       } catch (err) {
@@ -48,7 +50,8 @@ function TranscriptionForm() {
         title,
         name,
         email,
-        transcriptionText: combinedText,
+        text, // Send text separately
+        summary, // Send summary separately
       });
       setSuccess("Transkription erfolgreich gesendet!");
       setError("");
@@ -116,10 +119,22 @@ function TranscriptionForm() {
                   </label>
                   <textarea
                     id="transcription"
-                    value={combinedText}
+                    value={text}
                     className="form-control"
                     rows="5"
-                    onChange={(e) => setCombinedText(e.target.value)}
+                    onChange={(e) => setText(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="summary" className="form-label">
+                    Zusammenfassung:
+                  </label>
+                  <textarea
+                    id="summary"
+                    value={summary}
+                    className="form-control"
+                    rows="5"
+                    onChange={(e) => setSummary(e.target.value)}
                   />
                 </div>
                 <button

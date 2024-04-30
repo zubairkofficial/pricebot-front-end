@@ -65,7 +65,14 @@ function TranscriptionForm() {
           title,
           name,
           email,
-          transcriptionText: combinedText,
+          text,
+          summary,
+          date,
+          theme,
+          partnerNumber,
+          branchManager,
+          participants,
+          author
         }
       );
       setSuccess(true);
@@ -78,6 +85,8 @@ function TranscriptionForm() {
     }
     setLoading(false);
   };
+  
+  
 
   const back = () => {
     navigate("/Voice-Assistant");

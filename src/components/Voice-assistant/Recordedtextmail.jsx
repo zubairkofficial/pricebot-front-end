@@ -84,7 +84,7 @@ function TranscriptionForm() {
         title,
         name,
         email,
-        text: text, // Send listeningText as text
+        transcriptionText: text, // Send listeningText as text
         summary, // Send summary
         date,
         theme,

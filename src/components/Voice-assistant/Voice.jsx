@@ -190,21 +190,27 @@ function Dashboard() {
           </button>
 
           {transcriptionText && (
-            <div className="card mt-3">
-              <div className="card-body">
-                <h5 className="card-title">Transkription</h5>
-                <p className="card-text">{transcriptionText}</p>
-                <h5 className="card-title mt-4">Zusammenfassung</h5>
-                <p className="card-text">{transcriptionSummary}</p>
-                <button
-                  onClick={handleNextPageClickTranscription}
-                  className="btn btn-outline-secondary btn-block"
-                >
-                  Per E-Mail senden
-                </button>
-              </div>
-            </div>
-          )}
+  <div className="card mt-3">
+    <div className="card-body">
+      <h5 className="card-title">Transkription</h5>
+      <textarea
+        className="form-control"
+        style={{ height: "200px" }}
+        value={transcriptionText}
+        onChange={(e) => setTranscriptionText(e.target.value)}
+      ></textarea>
+      <h5 className="card-title mt-4">Zusammenfassung</h5>
+      <p className="card-text">{transcriptionSummary}</p>
+      <button
+        onClick={handleNextPageClickTranscription}
+        className="btn btn-outline-secondary btn-block"
+      >
+        Per E-Mail senden
+      </button>
+    </div>
+  </div>
+)}
+
 
           <div className="card">
             <div className="card-body">

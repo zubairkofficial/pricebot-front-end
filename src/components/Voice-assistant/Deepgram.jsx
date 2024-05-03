@@ -14,13 +14,14 @@ function TranscriptionForm() {
   const [text, setText] = useState("");
   const [summary, setSummary] = useState("");
   const location = useLocation();
-  const [date, setDate] = useState(""); // For Datum
-  const [theme, setTheme] = useState(""); // For Thema
-  const [partnerNumber, setPartnerNumber] = useState(""); // For Gesellschafter
-  const [branchManager, setBranchManager] = useState(""); // For Niederlassungsleiter
-  const [participants, setParticipants] = useState(""); // For Teilnehmer
-  const [author, setAuthor] = useState(""); // For Verfasser
-  const [partnerNumbers, setPartnerNumbers] = useState([]); // For dropdown options
+  const [date, setDate] = useState("");
+  const [theme, setTheme] = useState("");
+  const [partner, setPartner] = useState(null); // For selected partner
+  const [branchManager, setBranchManager] = useState("");
+  const [participants, setParticipants] = useState("");
+  const [author, setAuthor] = useState("");
+  const [partnerNumbers, setPartnerNumbers] = useState([]);
+  const [partnerNumber, setPartnerNumber] = useState(""); // Previous default value number
   const navigate = useNavigate();
 
   // Initialize form fields with values from location state
@@ -29,8 +30,8 @@ function TranscriptionForm() {
       setName(location.state.name || "");
       setTitle(location.state.title || "");
       setEmail(location.state.email || "");
-      setText(location.state.text || ""); // Use text prop instead of transcriptionText
-      setSummary(location.state.summary || ""); // Use summary prop instead of transcriptionSummary
+      setText(location.state.text || "");
+      setSummary(location.state.summary || "");
     }
   }, [location.state]);
 
@@ -46,13 +47,28 @@ function TranscriptionForm() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/getData`
         );
-        setPartnerNumbers(response.data.data); // Extract the data array from the response object
+        setPartnerNumbers(response.data.data);
       } catch (error) {
         setError(error.message);
       }
     };
 
     fetchPartnerNumbers();
+  }, []);
+
+  useEffect(() => {
+    const fetchLatestNumber = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/getLatestNumber`
+        );
+        setPartnerNumber(response.data); // Set the latest number as the default value
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchLatestNumber();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -65,18 +81,17 @@ function TranscriptionForm() {
           title,
           name,
           email,
-          text,
+          transcriptionText: text,
           summary,
           date,
           theme,
-          partnerNumber,
+          partnerNumber: partner ? partner.value.number : "",
           branchManager,
           participants,
-          author
+          author,
         }
       );
       setSuccess(true);
-      // Redirect to Voice Assistant page after 5 seconds
       setTimeout(() => {
         navigate("/Voice-Assistant");
       }, 5000);
@@ -85,29 +100,25 @@ function TranscriptionForm() {
     }
     setLoading(false);
   };
-  
-  
 
   const back = () => {
     navigate("/Voice-Assistant");
   };
+
   const options = partnerNumbers.map((partner) => ({
-    value: partner.number,
-    label: partner.number,
+    value: { number: partner.number, name: partner.name },
+    label: `${partner.number} / ${partner.name}`,
   }));
 
   const handleChange = (selectedOption) => {
-    setPartnerNumber(selectedOption.value);
+    setPartner(selectedOption);
   };
+
   return (
     <div className="container mt-3">
       <div className="row justify-content-center">
-        <div className="col-md-2">
-          {/* Sidebar Spalte */}
-          {/* Hier kann Sidebar-Inhalt hinzugefügt werden */}
-        </div>
+        <div className="col-md-2"></div>
         <div className="col-md-7">
-          {/* Hauptinhalt Spalte */}
           <div className="card">
             <div className="card-body">
               <h2 className="text-center mb-4">Transkriptionsdetails</h2>
@@ -163,7 +174,7 @@ function TranscriptionForm() {
                     <label>Gesellschafternummer:</label>
                     <Select
                       className="form-control"
-                      // value={value}
+                      value={partner || { value: partnerNumber, label: partnerNumber }}
                       onChange={handleChange}
                       options={options}
                     />

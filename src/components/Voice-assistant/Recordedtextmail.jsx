@@ -20,6 +20,8 @@ function TranscriptionForm() {
   const [participants, setParticipants] = useState("");
   const [author, setAuthor] = useState("");
   const [partnerNumbers, setPartnerNumbers] = useState([]);
+  const [partner, setPartner] = useState(null); // For selected partner
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -81,8 +83,8 @@ function TranscriptionForm() {
     setLoading(true);
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/sendEmail`, {
-        title,
-        name,
+        // title,
+        // name,
         email,
         transcriptionText: text, // Send listeningText as text
         summary, // Send summary
@@ -109,12 +111,14 @@ function TranscriptionForm() {
   };
 
   const options = partnerNumbers.map((partner) => ({
-    value: partner.number,
-    label: partner.number,
+    value: { number: partner.number, name: partner.name },
+    label: `${partner.number} / ${partner.name}`,
   }));
 
+  
+
   const handleChange = (selectedOption) => {
-    setPartnerNumber(selectedOption.value);
+    setPartner(selectedOption);
   };
 
   return (
@@ -134,7 +138,7 @@ function TranscriptionForm() {
                 </p>
               ) : (
                 <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
+                  {/* <div className="mb-3">
                     <label htmlFor="name" className="form-label">
                       Name:
                     </label>
@@ -157,7 +161,7 @@ function TranscriptionForm() {
                       onChange={(e) => setTitle(e.target.value)}
                       className="form-control"
                     />
-                  </div>
+                  </div> */}
                   <div className="form-group">
                     <label>Datum:</label>
                     <input
@@ -180,6 +184,7 @@ function TranscriptionForm() {
                     <label>Gesellschafternummer:</label>
                     <Select
                       className="form-control"
+                      value={partner || { value: partnerNumber, label: partnerNumber }}
                       onChange={handleChange}
                       options={options}
                     />

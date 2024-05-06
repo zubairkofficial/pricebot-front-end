@@ -13,6 +13,7 @@ function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [summaryError, setSummaryError] = useState("");
   const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
+  const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] = useState(false);
   const [date, setDate] = useState(""); // For Datum
   const [theme, setTheme] = useState(""); // For Thema
   const [partnerNumber, setPartnerNumber] = useState(""); // For Gesellschafter
@@ -96,16 +97,19 @@ function Dashboard() {
 
   const handleGenerateSummary = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/generateSummary`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ recordedText: listeningText }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/generateSummary`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ recordedText: listeningText }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to generate summary.');
+        throw new Error("Failed to generate summary.");
       }
 
       const data = await response.json();
@@ -114,8 +118,8 @@ function Dashboard() {
       // Show email button after generating summary
       setIsEmailButtonVisible(true);
     } catch (error) {
-      console.error('Error generating summary:', error);
-      setSummaryError('Error generating summary.');
+      console.error("Error generating summary:", error);
+      setSummaryError("Error generating summary.");
     }
   };
 
@@ -142,9 +146,12 @@ function Dashboard() {
   const handleStopListening = () => {
     // Stop listening
     setIsListening(false);
-
+  
     // Generate summary when listening stops
     handleGenerateSummary();
+    
+    // Show generate summary button
+    setIsEmailButtonVisible(true);
   };
 
   return (
@@ -152,8 +159,6 @@ function Dashboard() {
       <h2 className="text-center mb-4">Protokoll</h2>
       <div className="row justify-content-center m-3">
         <div className="col-md-12">
-
-       
           <div className="d-flex justify-content-between">
             <Link
               to={"/List"}
@@ -171,7 +176,70 @@ function Dashboard() {
       <div className="row justify-content-center">
         <div className="col-md-2"></div>
         <div className="col-md-10">
-        
+         
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title ">
+                Nehmen Sie Ihre Stimme auf
+              </h5>
+            <textarea
+  className="form-control"
+  style={{ minHeight: "100px" }}
+  readOnly={isListening}
+  value={listeningText}
+  onChange={(e) => setListeningText(e.target.value)}
+  placeholder="Beginnen Sie zu sprechen oder laden Sie Ihre Sprache hoch, um sie hier zu transkribieren."
+/>
+
+
+              {summaryError && (
+                <div
+                  style={{ color: "red", marginTop: "5px", fontSize: "14px" }}
+                >
+                  {summaryError}
+                </div>
+              )}
+              {summary && (
+                <div>
+                  <h5 className="mt-3">Zusammenfassung:</h5>
+                  <p className="card-text">{summary}</p>
+                </div>
+              )}
+              {!isListening && isGenerateSummaryButtonVisible && (
+                <div>
+                  <button
+                    onClick={handleGenerateSummary}
+                    className="btn btn-secondary mt-3 me-1 "
+                  >
+                    Zusammenfassung generieren
+                  </button>
+                  {isEmailButtonVisible && (
+                    <button
+                      onClick={handleNextPageClickListening}
+                      className="btn btn-outline-secondary mt-3"
+                    >
+                      Per E-Mail senden
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setIsListening(!isListening);
+              setIsEmailButtonVisible(false); // Hide email button when starting listening
+              setIsGenerateSummaryButtonVisible(true); // Hide generate summary button when starting listening
+            }}
+            className={`btn ${
+              isListening ? "btn-danger" : "btn-success"
+            } btn-block mb-3`}
+          >
+            {isListening ? "Spracherkennung stoppen" : "Spracherkennung starten"}
+          </button>
+
+          <h4 className="text-center p-3">Sprachaufzeichnung hochladen</h4>
           <input
             type="file"
             onChange={handleFileChange}
@@ -190,82 +258,39 @@ function Dashboard() {
           </button>
 
           {transcriptionText && (
-  <div className="card mt-3">
-    <div className="card-body">
-      <h5 className="card-title">Transkription</h5>
-      <textarea
-        className="form-control"
-        style={{ height: "200px" }}
-        value={transcriptionText}
-        onChange={(e) => setTranscriptionText(e.target.value)}
-      ></textarea>
-      <h5 className="card-title mt-4">Zusammenfassung</h5>
-      <p className="card-text">{transcriptionSummary}</p>
-      <button
-        onClick={handleNextPageClickTranscription}
-        className="btn btn-outline-secondary btn-block"
-      >
-        Per E-Mail senden
-      </button>
-    </div>
-  </div>
-)}
-
-
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">Spracherkennung</h5>
-              <p className="card-text">
-                {listeningText ||
-                  "Beginnen Sie zu sprechen oder laden Sie Ihre Sprache hoch, um sie hier zu transkribieren."}
-              </p>
-
-              {summaryError && (
-                <div
-                  style={{ color: "red", marginTop: "5px", fontSize: "14px" }}
+            <div className="card mt-3">
+              <div className="card-body">
+                <h5 className="card-title">Transkription</h5>
+                <textarea
+                  className="form-control"
+                  style={{ height: "200px" }}
+                  value={transcriptionText}
+                  onChange={(e) => setTranscriptionText(e.target.value)}
+                ></textarea>
+                <h5 className="card-title mt-4">Zusammenfassung</h5>
+                <p className="card-text">{transcriptionSummary}</p>
+                <button
+                  onClick={handleNextPageClickTranscription}
+                  className="btn btn-outline-secondary btn-block"
                 >
-                  {summaryError}
-                </div>
-              )}
-              {summary && (
-                <div>
-                  <h5 className="mt-3">Zusammenfassung:</h5>
-                  <p className="card-text">{summary}</p>
-                </div>
-              )}
-              {!isListening && (
-                <div>
-                  <button
-                    onClick={handleGenerateSummary}
-                    className="btn btn-secondary mt-3 me-1"
-                  >
-                    Zusammenfassung generieren
-                  </button>
-                  {isEmailButtonVisible && ( // Conditionally render email button
-                    <button
-                      onClick={handleNextPageClickListening}
-                      className="btn btn-outline-secondary mt-3"
-                    >
-                      Per E-Mail senden
-                    </button>
-                  )}
-                </div>
-              )}
+                  Per E-Mail senden
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
-          <button
-            onClick={() => setIsListening(!isListening)}
-            className={`btn ${
-              isListening ? "btn-danger" : "btn-success"
-            } btn-block mb-3`}
-          >
-            {isListening
-              ? "Spracherkennung stoppen"
-              : "Spracherkennung starten"}
-          </button>
+          {isEmailButtonVisible && (
+            <button
+              onClick={handleNextPageClickListening}
+              className="btn btn-outline-secondary btn-block mt-3"
+            >
+              Per E-Mail senden
+            </button>
+          )}
+
         </div>
       </div>
+      
     </div>
   );
 }

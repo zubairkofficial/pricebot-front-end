@@ -44,15 +44,16 @@ function TranscriptionForm() {
   useEffect(() => {
     const fetchPartnerNumbers = async () => {
       try {
-        const response = await axios.get(
+        const response = await fetch(
           `${import.meta.env.VITE_API_URL}/getData`
         );
-        setPartnerNumbers(response.data.data);
+        const data = await response.json();
+        setPartnerNumbers(data.data);
       } catch (error) {
         setError(error.message);
       }
     };
-
+    
     fetchPartnerNumbers();
   }, []);
 
@@ -62,14 +63,24 @@ function TranscriptionForm() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/getLatestNumber`
         );
-        setPartnerNumber(response.data); // Set the latest number as the default value
+        console.log(response.data);
+        setPartnerNumber(response.data.number);
+        // Convert the date format from "DD-MM-YY" to "YYYY-MM-DD"
+        const parts = response.data.Datum.split('-');
+        const parsedDate = `20${parts[2]}-${parts[1]}-${parts[0]}`;
+        setDate(parsedDate); // Set the date
+        setTheme(response.data.Thema); // Set the theme
+        setBranchManager(response.data.Niederlassungsleiter); // Set the theme
+        setParticipants(response.data.Teilnehmer); // Set the participants
       } catch (error) {
         setError(error.message);
       }
     };
-
+  
     fetchLatestNumber();
   }, []);
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,14 +89,14 @@ function TranscriptionForm() {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/sendEmail`,
         {
-          title,
-          name,
+        
           email,
           transcriptionText: text,
           summary,
           date,
           theme,
-          partnerNumber: partner ? partner.value.number : "",
+          partnerNumber,
+          // Extract the number from the partner object
           branchManager,
           participants,
           author,
@@ -128,30 +139,7 @@ function TranscriptionForm() {
                 </p>
               ) : (
                 <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label htmlFor="name" className="form-label">
-                      Name:
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="title" className="form-label">
-                      Titel:
-                    </label>
-                    <input
-                      type="text"
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
+                
                   <div className="form-group">
                     <label>Datum:</label>
                     <input

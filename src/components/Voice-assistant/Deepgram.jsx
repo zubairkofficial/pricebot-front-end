@@ -44,16 +44,14 @@ function TranscriptionForm() {
   useEffect(() => {
     const fetchPartnerNumbers = async () => {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/getData`
-        );
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/getData`);
         const data = await response.json();
         setPartnerNumbers(data.data);
       } catch (error) {
         setError(error.message);
       }
     };
-    
+
     fetchPartnerNumbers();
   }, []);
 
@@ -66,21 +64,20 @@ function TranscriptionForm() {
         console.log(response.data);
         setPartnerNumber(response.data.number);
         // Convert the date format from "DD-MM-YY" to "YYYY-MM-DD"
-        const parts = response.data.Datum.split('-');
+        const parts = response.data.Datum.split("-");
         const parsedDate = `20${parts[2]}-${parts[1]}-${parts[0]}`;
         setDate(parsedDate); // Set the date
         setTheme(response.data.Thema); // Set the theme
         setBranchManager(response.data.Niederlassungsleiter); // Set the theme
         setParticipants(response.data.Teilnehmer); // Set the participants
+        console.log(response.data.Teilnehmer); // Ensure Teilnehmer data is received
       } catch (error) {
         setError(error.message);
       }
     };
-  
+
     fetchLatestNumber();
   }, []);
-  
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,7 +86,6 @@ function TranscriptionForm() {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/sendEmail`,
         {
-        
           email,
           transcriptionText: text,
           summary,
@@ -139,7 +135,6 @@ function TranscriptionForm() {
                 </p>
               ) : (
                 <form onSubmit={handleSubmit}>
-                
                   <div className="form-group">
                     <label>Datum:</label>
                     <input
@@ -162,7 +157,9 @@ function TranscriptionForm() {
                     <label>Gesellschafternummer:</label>
                     <Select
                       className="form-control"
-                      value={partner || { value: partnerNumber, label: partnerNumber }}
+                      value={options.find(
+                        (option) => option.value.number === partnerNumber
+                      )}
                       onChange={handleChange}
                       options={options}
                     />

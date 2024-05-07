@@ -13,7 +13,8 @@ function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [summaryError, setSummaryError] = useState("");
   const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
-  const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] = useState(false);
+  const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] =
+    useState(false);
   const [date, setDate] = useState(""); // For Datum
   const [theme, setTheme] = useState(""); // For Thema
   const [partnerNumber, setPartnerNumber] = useState(""); // For Gesellschafter
@@ -146,10 +147,10 @@ function Dashboard() {
   const handleStopListening = () => {
     // Stop listening
     setIsListening(false);
-  
+
     // Generate summary when listening stops
     handleGenerateSummary();
-    
+
     // Show generate summary button
     setIsEmailButtonVisible(true);
   };
@@ -159,38 +160,37 @@ function Dashboard() {
       <h2 className="text-center mb-4">Protokoll</h2>
       <div className="row justify-content-center m-3">
         <div className="col-md-12">
-          <div className="d-flex justify-content-between">
-            <Link
-              to={"/List"}
-              className="btn btn-secondary"
-              style={{ marginLeft: "12rem" }}
-            >
-              Werkzeuge
-            </Link>
-            <Link to={"/Record-mail"} className="btn btn-secondary ">
-              Vorherige Historie
-            </Link>
-          </div>
+        <div className=" container d-sm-flex justify-content-end">
+  <Link
+    to={"/List"}
+    className="btn btn-secondary mb-3 mb-sm-0"
+    style={{ marginLeft: "12rem" }}
+  >
+    Werkzeuge
+  </Link>
+  <Link to={"/Record-mail"} className="btn btn-secondary  ms-2">
+    Vorherige Historie
+  </Link>
+</div>
+
         </div>
       </div>
-      <div className="row justify-content-center">
+      <div className="row justify-content-center pt-3">
         <div className="col-md-2"></div>
         <div className="col-md-10">
-         
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title ">
-                Nehmen Sie Ihre Stimme auf
-              </h5>
-            <textarea
-  className="form-control"
-  style={{ minHeight: "100px" }}
-  readOnly={isListening}
-  value={listeningText}
-  onChange={(e) => setListeningText(e.target.value)}
-  placeholder="Beginnen Sie zu sprechen oder laden Sie Ihre Sprache hoch, um sie hier zu transkribieren."
-/>
-
+              <h5 className="card-title ">Nehmen Sie Ihre Stimme auf</h5>
+              {isListening || listeningText !== "" ? (
+                <textarea
+                  className="form-control"
+                  style={{ minHeight: "100px" }}
+                  readOnly={isListening}
+                  value={listeningText}
+                  onChange={(e) => setListeningText(e.target.value)}
+                  placeholder="Beginnen Sie zu sprechen oder laden Sie Ihre Sprache hoch, um sie hier zu transkribieren."
+                />
+              ) : null}
 
               {summaryError && (
                 <div
@@ -209,7 +209,7 @@ function Dashboard() {
                 <div>
                   <button
                     onClick={handleGenerateSummary}
-                    className="btn btn-secondary mt-3 me-1 "
+                    className="btn btn-secondary mt-3 me-1"
                   >
                     Zusammenfassung generieren
                   </button>
@@ -236,8 +236,14 @@ function Dashboard() {
               isListening ? "btn-danger" : "btn-success"
             } btn-block mb-3`}
           >
-            {isListening ? "Spracherkennung stoppen" : "Spracherkennung starten"}
+            {isListening
+              ? "Spracherkennung stoppen"
+              : "Spracherkennung starten"}
           </button>
+
+
+
+          {/* voice upload  */}
 
           <h4 className="text-center p-3">Sprachaufzeichnung hochladen</h4>
           <input
@@ -268,7 +274,7 @@ function Dashboard() {
                   onChange={(e) => setTranscriptionText(e.target.value)}
                 ></textarea>
                 <h5 className="card-title mt-4">Zusammenfassung</h5>
-                <p className="card-text">{transcriptionSummary}</p>
+                <p className="card-text" style={{whiteSpace:'break-spaces'}}>{transcriptionSummary}</p>
                 <button
                   onClick={handleNextPageClickTranscription}
                   className="btn btn-outline-secondary btn-block"
@@ -278,19 +284,8 @@ function Dashboard() {
               </div>
             </div>
           )}
-
-          {isEmailButtonVisible && (
-            <button
-              onClick={handleNextPageClickListening}
-              className="btn btn-outline-secondary btn-block mt-3"
-            >
-              Per E-Mail senden
-            </button>
-          )}
-
         </div>
       </div>
-      
     </div>
   );
 }

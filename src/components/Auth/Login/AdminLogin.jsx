@@ -40,6 +40,12 @@ const Login = () => {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
     <>
       <div class="auth-main">
@@ -72,30 +78,32 @@ const Login = () => {
                 >
                   Melden Sie sich mit Ihrer E-Mail an
                 </h4>
-                <div class="form-group mb-3">
+                <div className="form-group mb-3">
                   <input
                     onChange={handleData}
+                    onKeyPress={handleKeyPress}
                     name="email"
                     value={data.email}
                     type="email"
-                    class="form-control"
+                    className="form-control"
                     id="floatingInput"
                     placeholder="E-Mail-Adresse"
                   />
                 </div>
-                <div class="form-group mb-3">
+                <div className="form-group mb-3">
                   <input
                     onChange={handleData}
+                    onKeyPress={handleKeyPress}
                     value={data.password}
                     name="password"
                     type="password"
-                    class="form-control"
+                    className="form-control"
                     id="floatingInput1"
-                    placeholder="Password"
+                    placeholder="Passwort"
                   />
                 </div>
 
-                <div class="d-grid mt-4">
+                <div className="d-grid mt-4">
                   <button
                     onClick={handleSubmit}
                     style={{
@@ -104,12 +112,10 @@ const Login = () => {
                       background: "#019645",
                     }}
                     type="button"
-                    class="btn btn-primary"
+                    className="btn btn-primary"
                   >
                     Anmeldung
                   </button>
-
-                  {/* <marquee behavior="" direction="right">Hello</marquee> */}
                 </div>
               </div>
             </div>

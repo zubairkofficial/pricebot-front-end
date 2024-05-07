@@ -34,6 +34,7 @@ function InvoiceDetails() {
         const matchedValues = compareData(invoiceData, postData.matched_invoices);
         setMatchedData(matchedValues);
       })
+      log
       .catch(error => console.error('Fehler beim Abrufen der Nachrechnungsdaten:', error))
       .finally(() => setLoading(false));
   };
@@ -121,7 +122,7 @@ function InvoiceDetails() {
                                 <div className="card-body">
                                     <p><strong>Titel:</strong> {matchedValue.title}</p>
                                     <p><strong>Produkt:</strong> {matchedValue.description}</p>
-                                    <p><strong>Kategorie:</strong> {matchedValue.category}</p>
+                                    <p><strong></strong></p>
                                     <p><strong>Datum:</strong> {matchedValue.date}</p>
                                     <p><strong>Fälligkeitsdatum:</strong> {matchedValue.due_date}</p>
                                     {matchedValue.matched ? (
@@ -161,15 +162,15 @@ function InvoiceDetails() {
         <>
             <p><strong>Titel:</strong> {selectedInvoice.title}</p>
             <p><strong>Rechnungsnummer:</strong> {selectedInvoice.invoice_number}</p>
-            <p><strong>Kategorie:</strong> {selectedInvoice.category}</p>
+            {/* <p><strong>Kategorie:</strong> {selectedInvoice.category}</p> */}
             <p><strong>Währungscode:</strong> {selectedInvoice.currency_code}</p>
             <p><strong>Datum:</strong> {selectedInvoice.date}</p>
             <p><strong>Fälligkeitsdatum:</strong> {selectedInvoice.due_date}</p>
-            <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p>
+            {/* <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p> */}
             <p><strong>Produkt:</strong> {selectedInvoice.description}</p>
-            <p><strong>Steuer:</strong> {Number(selectedInvoice.tax).toLocaleString('de-DE')}%</p>
+            <p><strong>Steuer:</strong> {selectedInvoice.tax}</p>
             <p><strong>Teilsumme:</strong> {Number(selectedInvoice.subtotal).toLocaleString('de-DE')}</p>
-            <p><strong>Gesamtsumme:</strong> {Number(selectedInvoice.total).toLocaleString('de-DE')}</p>
+            <p><strong>Gesamtsumme:</strong> {Number(selectedInvoice.price).toLocaleString('de-DE')}</p>
 
             {selectedInvoice.matched ? (
                 <div className="alert alert-success" role="alert">

@@ -70,7 +70,7 @@ function InvoiceDetail() {
                                             <p><strong>Produkt::</strong> {invoice.description}</p>
                                             <p><strong>Rechnungsnummer:</strong> {invoice.invoice_number}</p>
                                            
-                                            <p><strong>Kategorie:</strong> {invoice.category}</p>
+                                            {/* <p><strong>Kategorie:</strong> {invoice.category}</p> */}
                                             <p><strong>Datum:</strong> {invoice.date}</p>
                                             <p><strong>Fälligkeitsdatum:</strong> {invoice.due_date}</p>
                                             {invoice.matched ? (
@@ -107,17 +107,17 @@ function InvoiceDetail() {
                             {selectedInvoice && (
                                 <>
                                      <p><strong>Titel:</strong> {selectedInvoice.title}</p>
-            <p><strong>Rechnungsnummer:</strong> {selectedInvoice.invoice_number}</p>
-            <p><strong>Kategorie:</strong> {selectedInvoice.category}</p>
-            <p><strong>Währungscode:</strong> {selectedInvoice.currency_code}</p>
-            <p><strong>Datum:</strong> {selectedInvoice.date}</p>
-            <p><strong>Fälligkeitsdatum:</strong> {selectedInvoice.due_date}</p>
-            <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p>
-            <p><strong>Produkt:</strong> {selectedInvoice.description}</p>
-            <p><strong>Steuer:</strong> {Number(selectedInvoice.tax).toLocaleString('de-DE')}%</p>
-            <p><strong>Teilsumme:</strong> {Number(selectedInvoice.subtotal).toLocaleString('de-DE')}</p>
-            <p><strong>Gesamtsumme:</strong> {Number(selectedInvoice.total).toLocaleString('de-DE')}</p>
-                                    {/* Add more invoice details here */}
+                                    <p><strong>Rechnungsnummer:</strong> {selectedInvoice.invoice_number}</p>
+                                    {/* <p><strong>Kategorie:</strong> {selectedInvoice.category}</p> */}
+                                    <p><strong>Währungscode:</strong> {selectedInvoice.currency_code}</p>
+                                    <p><strong>Datum:</strong> {selectedInvoice.date}</p>
+                                    <p><strong>Fälligkeitsdatum:</strong> {selectedInvoice.due_date}</p>
+                                    {/* <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p> */}
+                                    <p><strong>Produkt:</strong> {selectedInvoice.description}</p>
+                                    <p><strong>Steuer:</strong> {selectedInvoice.tax}</p>
+                                    <p><strong>Teilsumme:</strong> {selectedInvoice.subtotal}</p>
+                                    <p><strong>Gesamtsumme:</strong> {selectedInvoice.price}</p>
+                                                            {/* Add more invoice details here */}
                                     <button className="btn btn-secondary" onClick={closeModal}>Schließen</button>
                                 </>
                             )}

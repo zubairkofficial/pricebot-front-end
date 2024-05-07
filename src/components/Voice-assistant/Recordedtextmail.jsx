@@ -119,7 +119,10 @@ function TranscriptionForm() {
 
   const handleChange = (selectedOption) => {
     setPartner(selectedOption);
+    // Update the partnerNumber state when a partner is selected
+    setPartnerNumber(selectedOption.value.number);
   };
+  
 
   return (
     <div className="container mt-3">

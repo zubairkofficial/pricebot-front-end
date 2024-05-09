@@ -29,15 +29,16 @@ function InvoiceDetails() {
   const fetchPostInvoiceData = (invoiceData) => {
     fetch(`${import.meta.env.VITE_API_URL}/compareInvoices`)
       .then(response => response.json())
+      
       .then(postData => {
         setPostInvoiceData(postData.matched_invoices);
         const matchedValues = compareData(invoiceData, postData.matched_invoices);
         setMatchedData(matchedValues);
       })
-      log
       .catch(error => console.error('Fehler beim Abrufen der Nachrechnungsdaten:', error))
       .finally(() => setLoading(false));
   };
+  console.log(fetchPostInvoiceData);
   
   const compareData = (invoiceData, postData) => {
     const matchedValues = [];
@@ -169,8 +170,8 @@ function InvoiceDetails() {
             {/* <p><strong>Dokumenttyp:</strong> {selectedInvoice.document_type}</p> */}
             <p><strong>Produkt:</strong> {selectedInvoice.description}</p>
             <p><strong>Steuer:</strong> {selectedInvoice.tax}</p>
-            <p><strong>Teilsumme:</strong> {Number(selectedInvoice.subtotal).toLocaleString('de-DE')}</p>
-            <p><strong>Gesamtsumme:</strong> {Number(selectedInvoice.price).toLocaleString('de-DE')}</p>
+            <p><strong>Teilsumme:</strong> {selectedInvoice.subtotal}</p>
+            <p><strong>Gesamtsumme:</strong> {selectedInvoice.price}</p>
 
             {selectedInvoice.matched ? (
                 <div className="alert alert-success" role="alert">

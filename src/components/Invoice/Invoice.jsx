@@ -33,33 +33,56 @@ function Invoice() {
       try {
         setUploading(true);
         setErrorMessage("");
-
+  
         // Format fromDate and toDate
         const formattedFromDate = formatDate(fromDate);
         const formattedToDate = formatDate(toDate);
-
+  
+        // Prepare data for storage API
+        const storageData = {
+          fromDate: formattedFromDate,
+          toDate: formattedToDate,
+        };
+  
+        // Send data to storage API
+        const storageResponse = await fetch(
+          `${import.meta.env.VITE_API_URL}/dates`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(storageData),
+          }
+        );
+  
+        if (!storageResponse.ok) {
+          throw new Error("Failed to store dates.");
+        }
+  
+        // Send invoice data for processing
         const formData = new FormData();
         formData.append("pdf", file);
         formData.append("title", title);
-        formData.append("fromDate", formattedFromDate); // Format fromDate
-        formData.append("toDate", formattedToDate); // Format toDate
-
-        const response = await fetch(
+        formData.append("fromDate", formattedFromDate);
+        formData.append("toDate", formattedToDate);
+  
+        const processingResponse = await fetch(
           `${import.meta.env.VITE_API_URL}/extractInvoiceData`,
           {
             method: "POST",
             body: formData,
           }
         );
-
-        if (!response.ok) {
+  
+        if (!processingResponse.ok) {
           throw new Error("Failed to process invoice.");
         }
-
-        const responseData = await response.json();
+  
+        const responseData = await processingResponse.json();
         console.log("Response Data:", responseData);
-
-        // Send original input dates to compareInvoices API
+  
+        // Compare invoices
         const compareResponse = await fetch(
           `${import.meta.env.VITE_API_URL}/compareInvoices`,
           {
@@ -70,17 +93,17 @@ function Invoice() {
             body: JSON.stringify({
               fromDate: formattedFromDate,
               toDate: formattedToDate,
-            }), // Sending original input dates
+            }),
           }
         );
-
+  
         if (!compareResponse.ok) {
           throw new Error("Failed to compare invoices.");
         }
-
+  
         const compareData = await compareResponse.json();
-        // console.log('Compare Data:', compareData);
-
+        console.log("Compare Data:", compareData);
+  
         handleNextPageClick(responseData);
       } catch (error) {
         console.error("Error processing the invoice:", error);
@@ -94,7 +117,7 @@ function Invoice() {
       );
     }
   };
-
+  
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");

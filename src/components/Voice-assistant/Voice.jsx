@@ -202,7 +202,7 @@ function Dashboard() {
               {summary && (
                 <div>
                   <h5 className="mt-3">Zusammenfassung:</h5>
-                  <p className="card-text">{summary}</p>
+                  <p className="card-text" style={{whiteSpace:'break-spaces'}} >{summary}</p>
                 </div>
               )}
               {!isListening && isGenerateSummaryButtonVisible && (

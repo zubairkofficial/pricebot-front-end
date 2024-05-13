@@ -44,6 +44,8 @@ import History2 from './pages/Invoice/History2';
 import Recordedtextmail2 from './pages/Recordedtextmail2'; 
 import Getdatawithdate2 from './pages/Invoice/Getdatawithdate2';
 
+import Edittool2 from './pages/Edit/Edittool2';
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -168,9 +170,16 @@ function App() {
     {
       path: "Recorded-text-mail",
       element: <Recordedtextmail2/>,
-    },{
+    },
+    {
       path: "Details-with-date/:uploadDate",
       element: <Getdatawithdate2/>,
+    },
+
+    // routes Edit tool
+    {
+      path: "Edit-tool",
+      element: <Edittool2/>,
     },
   ]);
 

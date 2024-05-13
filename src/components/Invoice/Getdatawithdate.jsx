@@ -15,6 +15,7 @@ function InvoiceDetail() {
     const fetchInvoiceData = async (date) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/getInvoiceDataByUploadDate/${uploadDate}`);
+            console.log(response);
             const data = await response.json();
             setInvoiceData(data.data);
             setIsLoading(false);

@@ -42,9 +42,12 @@ const FileUpload = () => {
       link: "/preishistorie"
     },
     {
+      id: "Edit-tool",
       name: "Finde Lieferscheine mit",
       description: "manuellen Änderungen",
-      img: "6.jpg"
+      img: "6.jpg",
+      link: "/Edit-tool"
+
     }
   ];
 

@@ -15,12 +15,7 @@ function Dashboard() {
   const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
   const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] =
     useState(false);
-  const [date, setDate] = useState(""); // For Datum
-  const [theme, setTheme] = useState(""); // For Thema
-  const [partnerNumber, setPartnerNumber] = useState(""); // For Gesellschafter
-  const [branchManager, setBranchManager] = useState(""); // For Niederlassungsleiter
-  const [participants, setParticipants] = useState(""); // For Teilnehmer
-  const [author, setAuthor] = useState(""); // For Verfasser
+  const [isSummaryGenerating, setIsSummaryGenerating] = useState(false); // New state variable
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,6 +93,8 @@ function Dashboard() {
 
   const handleGenerateSummary = async () => {
     try {
+      setIsSummaryGenerating(true); // Set state to indicate summary generation is in progress
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/generateSummary`,
         {
@@ -121,6 +118,8 @@ function Dashboard() {
     } catch (error) {
       console.error("Error generating summary:", error);
       setSummaryError("Error generating summary.");
+    } finally {
+      setIsSummaryGenerating(false); // Reset state after summary generation is finished or failed
     }
   };
 
@@ -160,19 +159,18 @@ function Dashboard() {
       <h2 className="text-center mb-4">Protokoll</h2>
       <div className="row justify-content-center m-3">
         <div className="col-md-12">
-        <div className=" container d-sm-flex justify-content-end">
-  <Link
-    to={"/List"}
-    className="btn btn-secondary mb-3 mb-sm-0"
-    style={{ marginLeft: "12rem" }}
-  >
-    Werkzeuge
-  </Link>
-  <Link to={"/Record-mail"} className="btn btn-secondary  ms-2">
-    Vorherige Historie
-  </Link>
-</div>
-
+          <div className=" container d-sm-flex justify-content-end">
+            <Link
+              to={"/List"}
+              className="btn btn-secondary mb-3 mb-sm-0"
+              style={{ marginLeft: "12rem" }}
+            >
+              Werkzeuge
+            </Link>
+            <Link to={"/Record-mail"} className="btn btn-secondary ms-2">
+              Vorherige Historie
+            </Link>
+          </div>
         </div>
       </div>
       <div className="row justify-content-center pt-3">
@@ -202,7 +200,7 @@ function Dashboard() {
               {summary && (
                 <div>
                   <h5 className="mt-3">Zusammenfassung:</h5>
-                  <p className="card-text" style={{whiteSpace:'break-spaces'}} >{summary}</p>
+                  <p className="card-text" style={{ whiteSpace: 'break-spaces' }}>{summary}</p>
                 </div>
               )}
               {!isListening && isGenerateSummaryButtonVisible && (
@@ -210,8 +208,9 @@ function Dashboard() {
                   <button
                     onClick={handleGenerateSummary}
                     className="btn btn-secondary mt-3 me-1"
+                    disabled={isSummaryGenerating} // Disable button when summary is generating
                   >
-                    Zusammenfassung generieren
+                    {isSummaryGenerating ? "Zusammenfassung wird generiert..." : "Zusammenfassung generieren"}
                   </button>
                   {isEmailButtonVisible && (
                     <button
@@ -241,10 +240,7 @@ function Dashboard() {
               : "Spracherkennung starten"}
           </button>
 
-
-
-          {/* voice upload  */}
-
+          {/* Voice upload */}
           <h4 className="text-center p-3">Sprachaufzeichnung hochladen</h4>
           <input
             type="file"
@@ -274,7 +270,7 @@ function Dashboard() {
                   onChange={(e) => setTranscriptionText(e.target.value)}
                 ></textarea>
                 <h5 className="card-title mt-4">Zusammenfassung</h5>
-                <p className="card-text" style={{whiteSpace:'break-spaces'}}>{transcriptionSummary}</p>
+                <p className="card-text" style={{ whiteSpace: 'break-spaces' }}>{transcriptionSummary}</p>
                 <button
                   onClick={handleNextPageClickTranscription}
                   className="btn btn-outline-secondary btn-block"

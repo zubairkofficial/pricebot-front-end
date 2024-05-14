@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BsX } from 'react-icons/bs'; // Import the cross icon
+import { BsX } from 'react-icons/bs';
 import toast from 'react-hot-toast';
 
 function Edittool() {
-  const [files, setFiles] = useState([null]); // Initialize with one file input
-  const [titles, setTitles] = useState(['']); // Initialize with one title input
+  const [files, setFiles] = useState([null]);
+  const [titles, setTitles] = useState(['']);
   const [uploading, setUploading] = useState(false);
+  const [results, setResults] = useState([null]);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
@@ -24,17 +25,21 @@ function Edittool() {
   };
 
   const handleAddFileInput = () => {
-    setFiles([...files, null]); // Add a new file input
-    setTitles([...titles, '']); // Add a new title input
+    setFiles([...files, null]);
+    setTitles([...titles, '']);
+    setResults([...results, null]);
   };
 
   const handleRemoveFileInput = (index) => {
     const newFiles = [...files];
-    newFiles.splice(index, 1); // Remove file input at the specified index
+    newFiles.splice(index, 1);
     setFiles(newFiles);
     const newTitles = [...titles];
-    newTitles.splice(index, 1); // Remove title input at the specified index
+    newTitles.splice(index, 1);
     setTitles(newTitles);
+    const newResults = [...results];
+    newResults.splice(index, 1);
+    setResults(newResults);
   };
 
   const sendInvoiceData = async () => {
@@ -43,7 +48,8 @@ function Edittool() {
       setErrorMessage('');
       setSuccessMessage('');
 
-      // Iterate over each file
+      const newResults = [...results];
+
       for (let index = 0; index < files.length; index++) {
         const file = files[index];
         const title = titles[index];
@@ -58,36 +64,36 @@ function Edittool() {
         });
 
         if (!response.ok) throw new Error('Network response was not successful.');
+
+        const data = await response.json();
+        newResults[index] = data.result;
       }
 
-      // Show a single success toast after all invoices are uploaded
-      toast.success('Invoices uploaded successfully', { duration: 3000 }); // 3 seconds duration
+      setResults(newResults);
+      toast.success('Invoices uploaded successfully', { duration: 3000 });
 
-      // Clear input fields after successful upload
       setFiles([null]);
       setTitles(['']);
     } catch (error) {
       console.error('Error uploading the invoices:', error);
-      // Show error toast
       toast.error('Error uploading the invoices');
     } finally {
       setUploading(false);
     }
   };
 
-  const handleNextPageClick = (data) => {
-    navigate('/invoice-details', { state: { data } });
+  const closeResult = (index) => {
+    const newResults = [...results];
+    newResults[index] = null;
+    setResults(newResults);
   };
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Überprüfen Sie Ihre Rechnungen</h2> {/* Translate "Compare with Delivery" */}
+      <h2 className="text-center mb-4">Überprüfen Sie Ihre Rechnungen</h2>
       <div className="row justify-content-between align-items-end">
         <div className="col-md-6"></div>
-
-        <div className="col-md-6 d-flex justify-content-end">
-          {/* <Link  to={'/Delivery-Bills'} className='btn btn-outline-primary align-items-center m-3'>Vergleichen mit Lieferung Rechnungen</Link>  */}
-        </div>
+        <div className="col-md-6 d-flex justify-content-end"></div>
       </div>
       <div className="row justify-content-center mt-5">
         <div className="col-md-2"></div>
@@ -109,7 +115,7 @@ function Edittool() {
                     onClick={() => handleRemoveFileInput(index)}
                     className="btn btn-link mb-2"
                   >
-                    <BsX size={20} color="red" /> {/* Cross icon */}
+                    <BsX size={20} color="red" />
                   </button>
                 )}
               </div>
@@ -117,17 +123,26 @@ function Edittool() {
                 type="file"
                 onChange={(event) => handleFileChange(event, index)}
                 className="form-control mb-2"
-                accept=".pdf, image/*" // Accept both PDF and image files
+                accept="image/*"
                 required
               />
             </div>
           ))}
-
           {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
           {successMessage && <div className="alert alert-success" role="alert">{successMessage}</div>}
           <button onClick={sendInvoiceData} className="btn btn-primary mb-3" disabled={uploading}>
-            {uploading ? 'Wird hochgeladen...' : 'Rechnungen hochladen'} {/* Translate "Upload Invoices" */}
+            {uploading ? 'Wird hochgeladen...' : 'Rechnungen hochladen'}
           </button>
+          {results.map((result, index) => (
+            result && (
+              <div key={index} className={`alert ${result === 'YES' ? 'alert-success' : 'alert-danger'} d-flex align-items-center`} role="alert">
+                <span className="flex-grow-1">{result}</span>
+                <button type="button" className="btn btn-link" onClick={() => closeResult(index)}>
+                  <BsX size={20} color="black" />
+                </button>
+              </div>
+            )
+          ))}
         </div>
       </div>
     </div>

@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import Select from "react-select";
 
 function TranscriptionForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
-  const [text, setText] = useState(""); // Separate state for text
-  const [summary, setSummary] = useState(""); // Separate state for summary
+  const [text, setText] = useState("");
+  const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [date, setDate] = useState("");
+  const [theme, setTheme] = useState("");
+  const [partner, setPartner] = useState(null);
+  const [branchManager, setBranchManager] = useState("");
+  const [participants, setParticipants] = useState("");
+  const [author, setAuthor] = useState("");
+  const [partnerNumbers, setPartnerNumbers] = useState([]);
+  const [partnerNumber, setPartnerNumber] = useState(""); 
   const navigate = useNavigate();
   const { userId } = useParams();
 
@@ -21,12 +31,19 @@ function TranscriptionForm() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/getemailId/${userId}`
         );
+        console.log(response.data);
         const emailData = response.data.emails[0];
-        setName(emailData.name);
-        setTitle(emailData.title);
-        setEmail(emailData.email);
-        setText(emailData.text); // Set text from API response
-        setSummary(emailData.summary); // Set summary from API response
+        setName(emailData.name || "");
+        setTitle(emailData.title || "");
+        setEmail(emailData.email || "");
+        setText(emailData.transcriptionText || "");
+        setSummary(emailData.summary || "");
+        setDate(emailData.date || "");
+        setTheme(emailData.theme || "");
+        setPartnerNumber(emailData.partnerNumber || ""); // Ensure this is a string
+        setBranchManager(emailData.branchManager || "");
+        setParticipants(emailData.participants || "");
+        setAuthor(emailData.author || "");
         setError("");
         setSuccess("");
       } catch (err) {
@@ -42,16 +59,41 @@ function TranscriptionForm() {
     }
   }, [userId]);
 
+  useEffect(() => {
+    const fetchPartnerNumbers = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/getData`);
+        const data = await response.json();
+        if (Array.isArray(data.data)) {
+          setPartnerNumbers(data.data);
+        } else {
+          setPartnerNumbers([]); // Ensure partnerNumbers is an array
+          console.error("Fetched data is not an array:", data);
+        }
+      } catch (error) {
+        setError(error.message);
+        setPartnerNumbers([]); // Ensure partnerNumbers is an array in case of error
+        console.error("Error fetching partner numbers:", error);
+      }
+    };
+
+    fetchPartnerNumbers();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/sendResend`, {
-        title,
-        name,
+      await axios.post(`${import.meta.env.VITE_API_URL}/sendEmail`, {
         email,
-        text, // Send text separately
-        summary, // Send summary separately
+        transcriptionText: text,
+        summary,
+        date,
+        theme,
+        partnerNumber: partner?.value.number, 
+        branchManager,
+        participants,
+        author,
       });
       setSuccess("Transkription erfolgreich gesendet!");
       setError("");
@@ -64,96 +106,134 @@ function TranscriptionForm() {
     }
   };
 
+  const options = partnerNumbers.map((partner) => ({
+    value: { number: partner.number, name: partner.name },
+    label: `${partner.number} / ${partner.name}`,
+  }));
+
+  const handleChange = (selectedOption) => {
+    setPartner(selectedOption);
+    setPartnerNumber(selectedOption?.value.number || ""); 
+  };
+
   const back = () => navigate("/Voice-Assistant");
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-3">
       <div className="row justify-content-center">
-        <div className="col-md-2">
-          {/* Sidebar content can be added here */}
-        </div>
+        <div className="col-md-2"></div>
         <div className="col-md-7">
           <div className="card">
             <div className="card-body">
-              <h2 className="text-center mb-4">E-Mail-Details</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="name" className="form-label">
-                    Name:
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    className="form-control"
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="title" className="form-label">
-                    Titel:
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    value={title}
-                    className="form-control"
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    E-Mail:
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    className="form-control"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="transcription" className="form-label">
-                    Transkription:
-                  </label>
-                  <textarea
-                    id="transcription"
-                    value={text}
-                    className="form-control"
-                    rows="5"
-                    onChange={(e) => setText(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="summary" className="form-label">
-                    Zusammenfassung:
-                  </label>
-                  <textarea
-                    id="summary"
-                    value={summary}
-                    className="form-control"
-                    rows="5"
-                    onChange={(e) => setSummary(e.target.value)}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="btn btn-primary mt-4"
-                  disabled={loading}
-                >
-                  {loading ? "Bitte warten..." : "Transkription senden"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger ms-2 mt-4"
-                  onClick={back}
-                >
-                  Abbrechen
-                </button>
-                {success && <div className="text-success mt-2">{success}</div>}
-                {error && <div className="text-danger mt-2">{error}</div>}
-              </form>
+              <h2 className="text-center mb-4">Transkriptionsdetails</h2>
+              {success ? (
+                <p className="text-center">
+                  Transkription erfolgreich an {email} gesendet!
+                </p>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label>Datum:</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Thema:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={theme}
+                      onChange={(e) => setTheme(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Gesellschafternummer:</label>
+                    <Select
+                      className="form-control"
+                      value={options.find(option => option.value.number === partnerNumber)}
+                      onChange={handleChange}
+                      options={options}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Niederlassungsleiter:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={branchManager}
+                      onChange={(e) => setBranchManager(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Teilnehmer:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={participants}
+                      onChange={(e) => setParticipants(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Verfasser:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={author}
+                      onChange={(e) => setAuthor(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label">
+                      E-Mail:
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="transcription" className="form-label">
+                      Transkriptionstext:
+                    </label>
+                    <textarea
+                      id="transcription"
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      className="form-control"
+                      rows={10}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="summary" className="form-label">
+                      Zusammenfassung:
+                    </label>
+                    <textarea
+                      id="summary"
+                      value={summary}
+                      onChange={(e) => setSummary(e.target.value)}
+                      className="form-control"
+                      rows={10}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-primary mt-4"
+                    disabled={loading}
+                  >
+                    {loading ? "Bitte warten..." : "Transkription senden"}
+                  </button>
+                  <button className="btn btn-danger ms-2 mt-4" onClick={back}>
+                    Abbrechen
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>

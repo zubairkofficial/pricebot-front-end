@@ -150,7 +150,7 @@ function Invoice() {
         <div className="col-md-2"></div>
         <div className="col-md-10">
           <div className="mb-3">
-            <h3 className="p-2">Lieferschein</h3>
+            <h3 className="p-2">Rechnungen</h3>
             <div className="d-flex justify-content-start">
               <div className="me-3">
                 <DatePicker
@@ -197,7 +197,7 @@ function Invoice() {
             className="btn btn-primary mb-3"
             disabled={uploading}
           >
-            {uploading ? "Hochladen..." : "Rechnung hochladen"}
+            {uploading ? "Hochladen..." : "Lieferschein hochladen"}
           </button>
         </div>
       </div>

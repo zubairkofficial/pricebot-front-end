@@ -29,13 +29,17 @@ const SentEmails = () => {
   }, []);
 
   useEffect(() => {
-    const results = emails.filter(email =>
-      email.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      email.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const results = emails.filter(email => {
+      const name = email.email ? email.email.toLowerCase() : "";
+      const title = email.transcriptionText ? email.transcriptionText.toLowerCase() : "";
+      return (
+        name.includes(searchTerm.toLowerCase()) ||
+        title.includes(searchTerm.toLowerCase())
+      );
+    });
     setFilteredEmails(results);
   }, [searchTerm, emails]);
-
+  
   const handleEmailClick = (email) => {
     navigate(`/Resend-Email/${email.id}`);
   };
@@ -55,7 +59,7 @@ const SentEmails = () => {
                     <h2 className="flex-grow-1">Gesendete E-Mails</h2>
                     <InputGroup size="sm" className="mr-3" style={{ maxWidth: '300px' }}>
                       <FormControl
-                        placeholder="Nach Name oder Titel suchen..."
+                        placeholder="Nach email oder Transkriptions suchen..."
                         aria-label="Suche"
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
@@ -84,7 +88,7 @@ const SentEmails = () => {
                                 <div className="text-muted">Vollständige E-Mail anzeigen</div>
                               )}
                             </div>
-                            <small>{email.name}</small>
+                            <small>{email.email}</small>
                           </ListGroup.Item>
                         ))}
                       </ListGroup>

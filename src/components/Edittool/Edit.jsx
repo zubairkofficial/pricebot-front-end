@@ -70,13 +70,13 @@ function Edittool() {
       }
 
       setResults(newResults);
-      toast.success('Invoices uploaded successfully', { duration: 3000 });
+      toast.success('Rechnung erfolgreich prüfen', { duration: 3000 });
 
       setFiles([null]);
       setTitles(['']);
     } catch (error) {
       console.error('Error uploading the invoices:', error);
-      toast.error('Error uploading the invoices');
+      toast.error('Fehler beim Hochladen der Rechnunge');
     } finally {
       setUploading(false);
     }
@@ -131,16 +131,26 @@ function Edittool() {
           {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
           {successMessage && <div className="alert alert-success" role="alert">{successMessage}</div>}
           <button onClick={sendInvoiceData} className="btn btn-primary mb-3" disabled={uploading}>
-            {uploading ? 'Wird hochgeladen...' : 'Rechnungen hochladen'}
+            {uploading ? 'Wird hochgeladen...' : 'Bild hochladen'}
           </button>
           {results.map((result, index) => (
             result && (
-              <div key={index} className={`alert ${result === 'YES' ? 'alert-success' : 'alert-danger'} d-flex align-items-center`} role="alert">
-                <span className="flex-grow-1">{result}</span>
-                <button type="button" className="btn btn-link" onClick={() => closeResult(index)}>
-                  <BsX size={20} color="black" />
-                </button>
-              </div>
+              <div
+              key={index}
+              className={`alert ${result === 'YES' ? 'alert-success' : 'alert-danger'} d-flex align-items-center justify-content-between shadow-sm rounded p-3 mb-3`}
+              role="alert"
+            >
+              <span className="flex-grow-1">{result}</span>
+              <button
+                type="button"
+                className="btn btn-link text-decoration-none"
+                onClick={() => closeResult(index)}
+                aria-label="Close"
+              >
+                <BsX size={20} color="black" />
+              </button>
+            </div>
+            
             )
           ))}
         </div>

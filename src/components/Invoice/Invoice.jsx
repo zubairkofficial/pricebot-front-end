@@ -29,7 +29,7 @@ function Invoice() {
   };
 
   const sendInvoiceData = async () => {
-    if (file && title && fromDate && toDate) {
+    if (file  && fromDate && toDate) {
       try {
         setUploading(true);
         setErrorMessage("");
@@ -63,7 +63,7 @@ function Invoice() {
         // Send invoice data for processing
         const formData = new FormData();
         formData.append("pdf", file);
-        formData.append("title", title);
+        // formData.append("title", title);
         formData.append("fromDate", formattedFromDate);
         formData.append("toDate", formattedToDate);
   
@@ -113,7 +113,7 @@ function Invoice() {
       }
     } else {
       setErrorMessage(
-        "Bitte wählen Sie eine Datei aus, geben Sie einen Titel ein und wählen Sie sowohl das Von-Datum als auch das Bis-Datum aus."
+        "Bitte wählen Sie eine Datei aus und wählen Sie sowohl das Von-Datum als auch das Bis-Datum aus"
       );
     }
   };
@@ -171,7 +171,7 @@ function Invoice() {
                 />
               </div>
             </div>
-            <div className="d-flex align-items-center mt-3">
+            {/* <div className="d-flex align-items-center mt-3">
               <input
                 type="text"
                 value={title}
@@ -180,11 +180,11 @@ function Invoice() {
                 className="form-control mb-3"
                 required
               />
-            </div>
+            </div> */}
             <input
               type="file"
               onChange={handleFileChange}
-              className="form-control mb-2"
+              className="form-control mt-3"
               accept=".pdf"
               required
             />

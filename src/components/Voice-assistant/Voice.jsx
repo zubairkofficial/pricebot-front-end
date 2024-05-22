@@ -15,15 +15,17 @@ function Dashboard() {
   const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
   const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] =
     useState(false);
-  const [isSummaryGenerating, setIsSummaryGenerating] = useState(false); // New state variable
+  const [isSummaryGenerating, setIsSummaryGenerating] = useState(false);
   const navigate = useNavigate();
+
+  const userLoginId = localStorage.getItem("user_Login_Id");
 
   useEffect(() => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.lang = "de-DE"; // Set language to German
+      recognition.lang = "de-DE";
 
       recognition.continuous = true;
       recognition.interimResults = true;
@@ -54,74 +56,79 @@ function Dashboard() {
 
   const handleListen = () => setIsListening(!isListening);
 
-  const handleTranscribeClick = async () => {
+const handleTranscribeClick = async () => {
     if (file) {
-      const formData = new FormData();
-      formData.append("audio", file);
+        const formData = new FormData();
+        formData.append("audio", file);
+        formData.append("user_login_id", userLoginId); // Include the user_login_id in the form data
 
-      try {
-        setTranscribing(true);
-        setErrorMessage("");
+        try {
+            setTranscribing(true);
+            setErrorMessage("");
 
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/transcribe`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL}/transcribe`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
 
-        if (!response.ok)
-          throw new Error("Netzwerkantwort war nicht erfolgreich.");
+            if (!response.ok)
+                throw new Error("Netzwerkantwort war nicht erfolgreich.");
 
-        const data = await response.json();
+            const data = await response.json();
 
-        setTranscriptionText(
-          data.transcription.results.channels[0].alternatives[0].transcript
-        );
-        setTranscriptionSummary(data.summary);
-      } catch (error) {
-        console.error("Fehler beim Transkribieren der Datei:", error);
-        setErrorMessage("Fehler beim Transkribieren der Datei.");
-      } finally {
-        setTranscribing(false);
-      }
+            setTranscriptionText(
+                data.transcription.results.channels[0].alternatives[0].transcript
+            );
+            setTranscriptionSummary(data.summary);
+        } catch (error) {
+            console.error("Fehler beim Transkribieren der Datei:", error);
+            setErrorMessage("Fehler beim Transkribieren der Datei.");
+        } finally {
+            setTranscribing(false);
+        }
     } else {
-      setErrorMessage("Bitte wählen Sie zuerst eine Datei aus.");
+        setErrorMessage("Bitte wählen Sie zuerst eine Datei aus.");
     }
-  };
+};
+
 
   const handleGenerateSummary = async () => {
     try {
-      setIsSummaryGenerating(true); // Set state to indicate summary generation is in progress
+        setIsSummaryGenerating(true);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/generateSummary`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ recordedText: listeningText }),
+        const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/generateSummary`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    recordedText: listeningText,
+                    user_login_id: userLoginId, // Include the user_login_id in the body
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to generate summary.");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to generate summary.");
-      }
+        const data = await response.json();
+        setSummary(data.summary);
 
-      const data = await response.json();
-      setSummary(data.summary);
-
-      // Show email button after generating summary
-      setIsEmailButtonVisible(true);
+        setIsEmailButtonVisible(true);
     } catch (error) {
-      console.error("Error generating summary:", error);
-      setSummaryError("Error generating summary.");
+        console.error("Error generating summary:", error);
+        setSummaryError("Error generating summary.");
     } finally {
-      setIsSummaryGenerating(false); // Reset state after summary generation is finished or failed
+        setIsSummaryGenerating(false);
     }
-  };
+};
+
 
   const handleFileChange = (event) => setFile(event.target.files[0]);
 
@@ -144,13 +151,8 @@ function Dashboard() {
   };
 
   const handleStopListening = () => {
-    // Stop listening
     setIsListening(false);
-
-    // Generate summary when listening stops
     handleGenerateSummary();
-
-    // Show generate summary button
     setIsEmailButtonVisible(true);
   };
 
@@ -208,7 +210,7 @@ function Dashboard() {
                   <button
                     onClick={handleGenerateSummary}
                     className="btn btn-secondary mt-3 me-1"
-                    disabled={isSummaryGenerating} // Disable button when summary is generating
+                    disabled={isSummaryGenerating}
                   >
                     {isSummaryGenerating ? "Zusammenfassung wird generiert..." : "Zusammenfassung generieren"}
                   </button>
@@ -228,8 +230,8 @@ function Dashboard() {
           <button
             onClick={() => {
               setIsListening(!isListening);
-              setIsEmailButtonVisible(false); // Hide email button when starting listening
-              setIsGenerateSummaryButtonVisible(true); // Hide generate summary button when starting listening
+              setIsEmailButtonVisible(false);
+              setIsGenerateSummaryButtonVisible(true);
             }}
             className={`btn ${
               isListening ? "btn-danger" : "btn-success"
@@ -240,7 +242,6 @@ function Dashboard() {
               : "Spracherkennung starten"}
           </button>
 
-          {/* Voice upload */}
           <h4 className="text-center p-3">Sprachaufzeichnung hochladen</h4>
           <input
             type="file"

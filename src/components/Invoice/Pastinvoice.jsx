@@ -37,46 +37,67 @@ function Invoice() {
     setTitles(newTitles);
   };
 
+  const handleRemoveFile = (fileIndex, index) => {
+    const newFiles = [...files];
+    newFiles[fileIndex] = newFiles[fileIndex].filter((_, i) => i !== index);
+    setFiles(newFiles);
+  };
+
   const sendInvoiceData = async () => {
     try {
       setUploading(true);
       setErrorMessage('');
       setSuccessMessage('');
-
+  
+      // Validate if there are files to upload
+      let hasFiles = false;
+      for (let index = 0; index < files.length; index++) {
+        if (files[index].length > 0) {
+          hasFiles = true;
+          break;
+        }
+      }
+  
+      if (!hasFiles) {
+        throw new Error('Bitte wählen Sie mindestens eine Datei zum Hochladen aus.');
+      }
+  
       // Iterate over each file input
       for (let index = 0; index < files.length; index++) {
         const filesArray = files[index];
         const title = titles[index];
-
+  
         for (const file of filesArray) {
           const formData = new FormData();
           formData.append('pdf', file);
           formData.append('title', title);
-
+  
           const response = await fetch(`${import.meta.env.VITE_API_URL}/postinvoice`, {
             method: 'POST',
             body: formData,
           });
-
+  
           if (!response.ok) throw new Error('Network response was not successful.');
         }
       }
-
+  
       // Show a single success toast after all invoices are uploaded
       toast.success('Rechnungen erfolgreich hochgeladen', { duration: 3000 }); // 3 seconds duration
-
+  
       // Clear input fields after successful upload
       setFiles([[]]);
       setTitles(['']);
-
+      document.querySelectorAll('input[type="file"]').forEach(input => input.value = '');
+  
     } catch (error) {
       console.error('Error uploading the invoices:', error);
       // Show error toast
-      toast.error('Fehler beim Hochladen der Rechnungen');
+      toast.error(error.message || 'Fehler beim Hochladen der Rechnungen');
     } finally {
       setUploading(false);
     }
   };
+  
 
   const handleNextPageClick = (data) => {
     navigate('/invoice-details', { state: { data } });
@@ -94,21 +115,21 @@ function Invoice() {
       <div className="row justify-content-center">
         <div className="col-md-2"></div>
         <div className="col-md-10">
-          {files.map((fileArray, index) => (
-            <div key={index} className="mb-3">
+          {files.map((fileArray, fileIndex) => (
+            <div key={fileIndex} className="mb-3">
               <div className="d-flex align-items-center">
                 <input
                   type="text"
-                  value={titles[index]}
-                  onChange={(event) => handleTitleChange(event, index)}
+                  value={titles[fileIndex]}
+                  onChange={(event) => handleTitleChange(event, fileIndex)}
                   placeholder="Produktname eingeben"
                   className="form-control mb-3"
                   required
                 />
-                {index > 0 && (
+                {fileIndex > 0 && (
                   <button
                     type="button"
-                    onClick={() => handleRemoveFileInput(index)}
+                    onClick={() => handleRemoveFileInput(fileIndex)}
                     className="btn btn-link mb-2"
                   >
                     <BsX size={20} color="red" /> {/* Cross icon */}
@@ -117,17 +138,26 @@ function Invoice() {
               </div>
               <input
                 type="file"
-                onChange={(event) => handleFileChange(event, index)}
+                onChange={(event) => handleFileChange(event, fileIndex)}
                 className="form-control mb-2"
                 accept=".pdf"
                 multiple
                 required
               />
-              {/* Display selected file names */}
+              {/* Display selected file names with remove button */}
               {fileArray.length > 0 && (
-                <ul>
-                  {fileArray.map((file, fileIndex) => (
-                    <li key={fileIndex}>{file.name}</li>
+                <ul className="list-unstyled">
+                  {fileArray.map((file, index) => (
+                    <li key={index} className="d-flex align-items-center my-1">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile(fileIndex, index)}
+                        className="btn btn-link p-0 mr-2"
+                      >
+                        <BsX size={20} color="red" /> {/* Cross icon */}
+                      </button>
+                      {file.name}
+                    </li>
                   ))}
                 </ul>
               )}

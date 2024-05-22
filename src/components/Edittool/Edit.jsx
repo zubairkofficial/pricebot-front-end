@@ -4,17 +4,18 @@ import { BsX } from 'react-icons/bs';
 import toast from 'react-hot-toast';
 
 function Edittool() {
-  const [files, setFiles] = useState([null]);
+  const [files, setFiles] = useState([[]]);
   const [titles, setTitles] = useState(['']);
   const [uploading, setUploading] = useState(false);
-  const [results, setResults] = useState([null]);
+  const [results, setResults] = useState([[]]);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const userLoginId = localStorage.getItem("user_Login_Id");
 
   const handleFileChange = (event, index) => {
     const newFiles = [...files];
-    newFiles[index] = event.target.files[0];
+    newFiles[index] = Array.from(event.target.files);
     setFiles(newFiles);
   };
 
@@ -25,9 +26,9 @@ function Edittool() {
   };
 
   const handleAddFileInput = () => {
-    setFiles([...files, null]);
+    setFiles([...files, []]);
     setTitles([...titles, '']);
-    setResults([...results, null]);
+    setResults([...results, []]);
   };
 
   const handleRemoveFileInput = (index) => {
@@ -48,43 +49,51 @@ function Edittool() {
       setErrorMessage('');
       setSuccessMessage('');
 
-      const newResults = [...results];
+      const newResults = files.map(() => []);
 
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index];
-        const title = titles[index];
+      for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
+        const filesArray = files[fileIndex];
+        const title = titles[fileIndex];
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('title', title);
+        if (filesArray.length === 0) {
+          throw new Error('Bitte wählen Sie mindestens eine Datei zum Hochladen aus.');
+        }
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/processInvoice`, {
-          method: 'POST',
-          body: formData,
-        });
+        for (const file of filesArray) {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('title', title);
+          formData.append('user_login_id', userLoginId); // Include the user_login_id in the form data
 
-        if (!response.ok) throw new Error('Network response was not successful.');
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/processInvoice`, {
+            method: 'POST',
+            body: formData,
+          });
 
-        const data = await response.json();
-        newResults[index] = data.result;
+          if (!response.ok) throw new Error('Network response was not successful.');
+
+          const data = await response.json();
+          newResults[fileIndex].push({ fileName: file.name, result: data.result });
+        }
       }
 
       setResults(newResults);
       toast.success('Rechnung erfolgreich prüfen', { duration: 3000 });
 
-      setFiles([null]);
+      setFiles([[]]);
       setTitles(['']);
+      document.querySelectorAll('input[type="file"]').forEach(input => input.value = '');
     } catch (error) {
       console.error('Error uploading the invoices:', error);
-      toast.error('Fehler beim Hochladen der Rechnunge');
+      toast.error(error.message || 'Fehler beim Hochladen der Rechnungen');
     } finally {
       setUploading(false);
     }
   };
 
-  const closeResult = (index) => {
+  const closeResult = (fileIndex, resultIndex) => {
     const newResults = [...results];
-    newResults[index] = null;
+    newResults[fileIndex][resultIndex] = null;
     setResults(newResults);
   };
 
@@ -98,21 +107,21 @@ function Edittool() {
       <div className="row justify-content-center mt-5">
         <div className="col-md-2"></div>
         <div className="col-md-10">
-          {files.map((file, index) => (
-            <div key={index} className="mb-3">
+          {files.map((fileArray, fileIndex) => (
+            <div key={fileIndex} className="mb-3">
               <div className="d-flex align-items-center">
                 <input
                   type="text"
-                  value={titles[index]}
-                  onChange={(event) => handleTitleChange(event, index)}
+                  value={titles[fileIndex]}
+                  onChange={(event) => handleTitleChange(event, fileIndex)}
                   placeholder="Produktname eingeben"
                   className="form-control mb-3"
                   required
                 />
-                {index > 0 && (
+                {fileIndex > 0 && (
                   <button
                     type="button"
-                    onClick={() => handleRemoveFileInput(index)}
+                    onClick={() => handleRemoveFileInput(fileIndex)}
                     className="btn btn-link mb-2"
                   >
                     <BsX size={20} color="red" />
@@ -121,11 +130,33 @@ function Edittool() {
               </div>
               <input
                 type="file"
-                onChange={(event) => handleFileChange(event, index)}
+                onChange={(event) => handleFileChange(event, fileIndex)}
                 className="form-control mb-2"
                 accept="image/*"
                 required
+                multiple
               />
+              {results[fileIndex].length > 0 && (
+                results[fileIndex].map((result, resultIndex) => (
+                  result && (
+                    <div
+                      key={resultIndex}
+                      className={`alert ${result.result === 'YES' ? 'alert-success' : 'alert-danger'} d-flex align-items-center justify-content-between shadow-sm rounded p-3 mb-3`}
+                      role="alert"
+                    >
+                      <span className="flex-grow-1">{result.fileName} - {result.result}</span>
+                      <button
+                        type="button"
+                        className="btn btn-link text-decoration-none"
+                        onClick={() => closeResult(fileIndex, resultIndex)}
+                        aria-label="Close"
+                      >
+                        <BsX size={20} color="black" />
+                      </button>
+                    </div>
+                  )
+                ))
+              )}
             </div>
           ))}
           {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
@@ -133,26 +164,6 @@ function Edittool() {
           <button onClick={sendInvoiceData} className="btn btn-primary mb-3" disabled={uploading}>
             {uploading ? 'Wird hochgeladen...' : 'Bild hochladen'}
           </button>
-          {results.map((result, index) => (
-            result && (
-              <div
-              key={index}
-              className={`alert ${result === 'YES' ? 'alert-success' : 'alert-danger'} d-flex align-items-center justify-content-between shadow-sm rounded p-3 mb-3`}
-              role="alert"
-            >
-              <span className="flex-grow-1">{result}</span>
-              <button
-                type="button"
-                className="btn btn-link text-decoration-none"
-                onClick={() => closeResult(index)}
-                aria-label="Close"
-              >
-                <BsX size={20} color="black" />
-              </button>
-            </div>
-            
-            )
-          ))}
         </div>
       </div>
     </div>

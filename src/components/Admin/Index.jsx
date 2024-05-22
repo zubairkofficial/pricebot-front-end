@@ -34,6 +34,7 @@ const UserTable = () => {
         throw new Error("Failed to fetch user data");
       }
       const data = await response.json();
+      console.log(data);
       setUsers(data.roles);
       setLoading(false);
     } catch (error) {
@@ -111,6 +112,7 @@ const UserTable = () => {
                       <th scope="col">#</th>
                       <th scope="col">Name</th>
                       <th scope="col">Dienst</th>
+                      <th scope="col"> Gebrauchte Token</th>
                       <th scope="col">Aktionen</th>
                     </tr>
                   </thead>
@@ -120,6 +122,9 @@ const UserTable = () => {
                         <td>{index + 1}</td>
                         <td>{user.name}</td>
                         <td>{user.services.join(", ")}</td>
+                        <td>{user.total_tokens}</td>
+
+                        
                         <td>
                           <button
                             className="btn btn-primary btn-sm me-2"

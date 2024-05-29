@@ -68,6 +68,7 @@ function TranscriptionForm() {
         const parsedDate = `20${parts[2]}-${parts[1]}-${parts[0]}`;
         setDate(parsedDate); // Set the date
         setTheme(response.data.Thema); // Set the theme
+        setAuthor(response.data.BM); // Set the theme
         setBranchManager(response.data.Niederlassungsleiter); // Set the theme
         setParticipants(response.data.Teilnehmer); // Set the participants
         console.log(response.data.Teilnehmer); // Ensure Teilnehmer data is received
@@ -164,7 +165,7 @@ function TranscriptionForm() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Niederlassungsleiter:</label>
+                    <label>Verfasser:</label>
                     <input
                       type="text"
                       className="form-control"
@@ -182,7 +183,7 @@ function TranscriptionForm() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Verfasser:</label>
+                    <label>Niederlassungsleiter:</label>
                     <input
                       type="text"
                       className="form-control"

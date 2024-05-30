@@ -47,7 +47,13 @@ const FileUpload = () => {
       description: "manuellen Änderungen",
       img: "6.jpg",
       link: "/Edit-tool"
-
+    },
+    {
+      id: "Excel-tool",
+      name: "Datenanalyse",
+      description: "Analysiere Daten effizient und schnell",
+      img: "7.jpeg",
+      link: "/Excel-tool"
     }
   ];
 

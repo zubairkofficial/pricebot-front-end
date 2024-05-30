@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 
 function InvoiceHistory() {
   const [invoiceHistory, setInvoiceHistory] = useState([]);
@@ -17,6 +19,7 @@ function InvoiceHistory() {
         `${import.meta.env.VITE_API_URL}/invoiceHistory`
       );
       const data = await response.json();
+      console.log(data);
       setInvoiceHistory(data.data);
       setIsLoading(false);
     } catch (error) {
@@ -29,6 +32,27 @@ function InvoiceHistory() {
     navigate(`/Details-with-date/${entry.upload_date}`);
   };
 
+  const handleDeleteInvoice = async (uploadDate) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/deleteInvoicesByUploadDate/${uploadDate}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        await fetchInvoiceHistory();
+        toast.success("Rechnungen erfolgreich gelöscht");
+
+      } else {
+        console.error("Failed to delete invoices.");
+      }
+    } catch (error) {
+      console.error("Error deleting invoices:", error);
+    }
+  };
+  
+  
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -74,6 +98,7 @@ function InvoiceHistory() {
                 <tr>
                   <th scope="col">Hochladedatum</th>
                   <th scope="col">Gesamtanzahl Rechnungen</th>
+                  <th scope="col">Aktionen</th>
                 </tr>
               </thead>
               <tbody>
@@ -85,6 +110,18 @@ function InvoiceHistory() {
                   >
                     <td>{entry.upload_date}</td>
                     <td>{entry.total_invoices}</td>
+                    <td>
+                    <button
+  onClick={(e) => {
+    e.stopPropagation(); // Prevent row click event
+    handleDeleteInvoice(entry.upload_date);
+  }}
+  className="btn btn-danger"
+>
+  Löschen
+</button>
+
+                    </td>
                   </tr>
                 ))}
               </tbody>

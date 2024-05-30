@@ -43,6 +43,7 @@ import Pastinvoices2 from './pages/Invoice/Pastinvoice2';
 import History2 from './pages/Invoice/History2';
 import Recordedtextmail2 from './pages/Recordedtextmail2'; 
 import Getdatawithdate2 from './pages/Invoice/Getdatawithdate2';
+import Exceltool from './pages/Exceltool2';
 
 import Edittool2 from './pages/Edit/Edittool2';
 
@@ -180,6 +181,11 @@ function App() {
     {
       path: "Edit-tool",
       element: <Edittool2/>,
+    },
+
+    {
+      path: "Excel-tool",
+      element: <Exceltool/>,
     },
   ]);
 

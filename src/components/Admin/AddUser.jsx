@@ -18,6 +18,7 @@ const myData = [
   { label: "Protokoll", value: "Protokoll" },
   { label: "Preishistorie", value: "Preishistorie" },
   { label: "Finde Lieferscheine mit", value: "Finde Lieferscheine mit" },
+  { label: "Datenanalyse", value: "Datenanalyse" },
   
 ];
 

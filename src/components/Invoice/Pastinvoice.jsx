@@ -118,14 +118,7 @@ function Invoice() {
           {files.map((fileArray, fileIndex) => (
             <div key={fileIndex} className="mb-3">
               <div className="d-flex align-items-center">
-                <input
-                  type="text"
-                  value={titles[fileIndex]}
-                  onChange={(event) => handleTitleChange(event, fileIndex)}
-                  placeholder="Produktname eingeben"
-                  className="form-control mb-3"
-                  required
-                />
+                
                 {fileIndex > 0 && (
                   <button
                     type="button"

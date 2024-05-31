@@ -158,10 +158,7 @@ function InvoiceDetails() {
                           marginBottom: "10px",
                         }}
                       >
-                        <p>
-                          <strong>Titel:</strong>{" "}
-                          <span  > {matchedValue.title} </span>
-                        </p>
+                        
                       </div>
                       <div
                         style={{
@@ -263,9 +260,7 @@ function InvoiceDetails() {
             <div className="modal-body">
               {selectedInvoice && (
                 <>
-                  <p>
-                    <strong>Titel:</strong> {selectedInvoice.title}
-                  </p>
+                 
                   <p>
                     <strong>Rechnungsnummer:</strong>{" "}
                     {selectedInvoice.invoice_number}

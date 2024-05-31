@@ -110,9 +110,7 @@ function InvoiceDetail() {
                     </div>
 
                     <div className="card-body">
-                      <p>
-                        <strong>Titel:</strong> {invoice.title}
-                      </p>
+                      
                       <p>
                         <strong>Produkt::</strong> {invoice.description}
                       </p>
@@ -189,9 +187,7 @@ function InvoiceDetail() {
             <div className="modal-body">
               {selectedInvoice && (
                 <>
-                  <p>
-                    <strong>Titel:</strong> {selectedInvoice.title}
-                  </p>
+                 
                   <p>
                     <strong>Rechnungsnummer:</strong>{" "}
                     {selectedInvoice.invoice_number}

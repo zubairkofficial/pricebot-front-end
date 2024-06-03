@@ -10,6 +10,8 @@ function Invoice() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const userLoginId = localStorage.getItem("user_Login_Id");
+
 
   const handleFileChange = (event, index) => {
     const newFiles = [...files];
@@ -71,6 +73,7 @@ function Invoice() {
           const formData = new FormData();
           formData.append('pdf', file);
           formData.append('title', title);
+          formData.append('user_login_id', userLoginId); 
   
           const response = await fetch(`${import.meta.env.VITE_API_URL}/postinvoice`, {
             method: 'POST',

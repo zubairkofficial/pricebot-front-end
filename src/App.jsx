@@ -46,7 +46,8 @@ import Getdatawithdate2 from './pages/Invoice/Getdatawithdate2';
 import Exceltool from './pages/Exceltool2';
 
 import Edittool2 from './pages/Edit/Edittool2';
-
+import ApiSettings2 from './pages/Admin2/ApiSettings2';
+import Otherapi2 from './pages/Admin2/Otherapi2';
 function App() {
   const router = createBrowserRouter([
     {
@@ -186,6 +187,16 @@ function App() {
     {
       path: "Excel-tool",
       element: <Exceltool/>,
+    },
+
+    {
+      path: "Key-Settings",
+      element: <ApiSettings2/>,
+    },
+
+    {
+      path: "Other-Api-Settings",
+      element: <Otherapi2 />,
     },
   ]);
 

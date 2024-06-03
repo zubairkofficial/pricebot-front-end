@@ -1,14 +1,22 @@
 import React from "react";
-import FileUpload from "../components/FileUpload/FileUpload";
-import Helpers from "../Helpers/Helpers";
-import Loader from "../components/Loader/Loader";
-import Sidebar from "../components/Sidebar/Sidebar";
-import Header from "../components/Header/Header";
-import Footer from "../components/Footer/Footer";
-import Offcanvas from "../components/Offcanvas/Offcanvas";
+import FileUpload from "../../components/FileUpload/FileUpload";
+import Helpers from "../../Helpers/Helpers";
+import Loader from "../../components/Loader/Loader";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer/Footer";
+import Offcanvas from "../../components/Offcanvas/Offcanvas";
 import { useNavigate } from "react-router-dom";
-import Sidebar2 from "../components/Sidebar/Sidebae2";
-const Index = () => {
+import Sidebar2 from "../../components/Sidebar/Sidebae2";
+import First from '../../components/Dasboard/First';
+import Index from '../../components/Admin/Index';
+import AddUser from '../../components/Admin/AddUser';
+import SideBar from '../../components/Admin/SideBar';
+import Edit from '../../components/Admin/Edit';
+import ApiSettings from '../../components/Admin/ApiSettings';
+
+
+const Index2 = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -24,21 +32,13 @@ const Index = () => {
   }, []);
 
   React.useEffect(() => {
-    const userServices = JSON.parse(localStorage.getItem("user_Services"));
-    if (userServices && userServices.includes("Preisbot")) {
-        const userLoginId = localStorage.getItem("user_Login_Id");
-        if (userLoginId) {
-            navigate('/');
-        } else {
-            navigate('/registration');
-        }
+    const role = localStorage.getItem("role");
+    if (role === "1") {
+      navigate('/Key-Settings');
     } else {
-        // If user does not have access to this page, redirect them to another page
-        navigate('/List');
+      navigate('/Admin-Login');
     }
-}, [navigate]);
-
-  
+  }, [navigate]);
 
   return (
     <>
@@ -51,13 +51,12 @@ const Index = () => {
       >
         <Loader />
         {/* <!-- [ Sidebar Menu ] start --> */}
-        <Sidebar />
+        <SideBar />
         {/* <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start --> */}
-  
-        <FileUpload 
-       
-        />
+        {/* <Header /> */}
+            < ApiSettings/>
         
+ 
         <Footer />
         <Offcanvas />
       </body>
@@ -65,4 +64,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Index2;

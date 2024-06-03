@@ -11,6 +11,8 @@ function Invoice() {
   const [uploading, setUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const userLoginId = localStorage.getItem("user_Login_Id");
+
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -66,6 +68,8 @@ function Invoice() {
         // formData.append("title", title);
         formData.append("fromDate", formattedFromDate);
         formData.append("toDate", formattedToDate);
+        formData.append('user_login_id', userLoginId); 
+
   
         const processingResponse = await fetch(
           `${import.meta.env.VITE_API_URL}/extractInvoiceData`,

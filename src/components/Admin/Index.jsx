@@ -10,6 +10,8 @@ const UserTable = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState(null);
+  const [showUsageModal, setShowUsageModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const { roleId } = useParams();
   const navigate = useNavigate();
 
@@ -23,9 +25,6 @@ const UserTable = () => {
       }, 3000);
     }
   }, [location.state]);
-  // useEffect(() => {
-  //   setAlertMessage("");
-  // }, []);
 
   const fetchUsers = async () => {
     try {
@@ -34,7 +33,6 @@ const UserTable = () => {
         throw new Error("Failed to fetch user data");
       }
       const data = await response.json();
-      console.log(data);
       setUsers(data.roles);
       setLoading(false);
     } catch (error) {
@@ -72,14 +70,23 @@ const UserTable = () => {
     }, 5000);
   };
 
+  const handleEdit = (roleId) => {
+    navigate(`/Edit/${roleId}`);
+  };
+
+  const handleShowUsage = (user) => {
+    setSelectedUser(user);
+    setShowUsageModal(true);
+  };
+
+  const handleCloseUsageModal = () => {
+    setShowUsageModal(false);
+    setSelectedUser(null);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const handleEdit = (roleId) => {
-    // Any pre-navigation logic can go here
-    navigate(`/Edit/${roleId}`);
-  };
 
   return (
     <div className="container mt-5">
@@ -105,15 +112,17 @@ const UserTable = () => {
           )}
           <div className="card shadow-sm">
             <div className="card-body">
-              <div className="table-responsive">
+              <div className="table-responsive" style={{ overflowX: "auto" }}>
                 <table className="table table-hover mb-0">
-                  <thead style={{ backgroundColor: "", color: "white" }}>
+                  <thead style={{ color: "white" }}>
                     <tr>
                       <th scope="col">#</th>
                       <th scope="col">Name</th>
                       <th scope="col">Dienst</th>
-                      <th scope="col"> Gebrauchte Token</th>
-                      <th scope="col">Aktionen</th>
+                  
+                       <th scope="col">Aktionen</th>
+                       <th scope="col">Verwendung</th>
+                     
                     </tr>
                   </thead>
                   <tbody>
@@ -122,9 +131,7 @@ const UserTable = () => {
                         <td>{index + 1}</td>
                         <td>{user.name}</td>
                         <td>{user.services.join(", ")}</td>
-                        <td>{user.total_tokens}</td>
-
-                        
+                       
                         <td>
                           <button
                             className="btn btn-primary btn-sm me-2"
@@ -134,11 +141,21 @@ const UserTable = () => {
                             <i className="bi bi-pencil-square"></i>
                           </button>
                           <button
-                            className="btn btn-danger btn-sm"
+                            className="btn btn-danger btn-sm me-2"
                             onClick={() => handleDelete(user.id)}
                             title="Löschen"
                           >
                             <i className="bi bi-trash"></i>
+                          </button>
+                          
+                        </td>
+                        <td>
+                        <button
+                            className="btn btn-info btn-sm"
+                            onClick={() => handleShowUsage(user)}
+                            title="Usage anzeigen"
+                          >
+                            <i className="bi bi-eye"></i>
                           </button>
                         </td>
                       </tr>
@@ -163,14 +180,39 @@ const UserTable = () => {
               Sind Sie sicher, dass Sie diese Rolle löschen möchten?
             </Modal.Body>
             <Modal.Footer>
-              <Button
-                variant="secondary"
-                onClick={() => setShowConfirmation(false)}
-              >
+              <Button variant="secondary" onClick={() => setShowConfirmation(false)}>
                 Abbrechen
               </Button>
               <Button variant="danger" onClick={confirmDelete}>
                 Löschen
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Usage Modal */}
+          <Modal
+            show={showUsageModal}
+            onHide={handleCloseUsageModal}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Nutzungsdetails</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {selectedUser && (
+                <div>
+                  <p><strong>Name:</strong> {selectedUser.name}</p>
+                  <p><strong>E-mail:</strong> {selectedUser.email}</p>
+                  <p><strong>Protokoll Verwendung:</strong> {selectedUser.voice_tool}</p>
+                  <p><strong>Finde Lieferscheine mit Verwendung:</strong> {selectedUser.edit_tool}</p>
+                  <p><strong>Preishistorie Verwendung:</strong> {selectedUser.invoice_tool}</p>
+                  <p><strong>Datenanalyse Verwendung:</strong> {selectedUser.excel_tool}</p>
+                </div>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseUsageModal}>
+                Schließen
               </Button>
             </Modal.Footer>
           </Modal>

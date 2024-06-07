@@ -193,7 +193,7 @@ const Sidebar = () => {
               </Link>
             </li>
           </ul>
-          <div style={{ paddingLeft: "60px", paddingTop: "17rem" }}>
+          <div style={{ paddingLeft: "60px", paddingTop: "15rem" }}>
             <a
               href="/Admin-login"
               onClick={logout}

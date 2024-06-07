@@ -126,17 +126,7 @@ function InvoiceDetail() {
                       <p>
                         <strong>Fälligkeitsdatum:</strong> {invoice.due_date}
                       </p>
-                      {invoice.matched ? (
-                        <div className="alert alert-success" role="alert">
-                          Rechnungsdaten stimmen mit den Nachrechnungsdaten
-                          überein.
-                        </div>
-                      ) : (
-                        <div className="alert alert-warning" role="alert">
-                          Rechnungsdaten stimmen nicht mit den
-                          Nachrechnungsdaten überein.
-                        </div>
-                      )}
+                      
 
                       <div className="text-center">
                         <button

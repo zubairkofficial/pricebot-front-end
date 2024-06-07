@@ -1,109 +1,115 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import "react-datepicker/dist/react-datepicker.css";
+import React, { useState } from 'react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
-const DataAnalysis = () => {
-  const [file, setFile] = useState(null);
-  const [prompt, setPrompt] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [result, setResult] = useState("");
+const ExcelMerge = () => {
+    const [qlikviewFile, setQlikviewFile] = useState(null);
+    const [lagerbestandslisteFile, setLagerbestandslisteFile] = useState(null);
+    const [downloadLink, setDownloadLink] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-  const handleDataAnalysisFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (e.target.name === 'qlikview') {
+            setQlikviewFile(file);
+        } else if (e.target.name === 'lagerbestandsliste') {
+            setLagerbestandslisteFile(file);
+        }
+    };
 
-  const handleDataAnalysisPromptChange = (e) => {
-    setPrompt(e.target.value);
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!qlikviewFile || !lagerbestandslisteFile) {
+            setErrorMessage('Bitte laden Sie beide Dateien hoch.');
+            return;
+        }
 
-  const sendDataAnalysisData = async () => {
-    if (!file) {
-      setErrorMessage("Bitte laden Sie eine Excel-Datei hoch.");
-      return;
-    }
+        const formData = new FormData();
+        formData.append('qlikview', qlikviewFile);
+        formData.append('lagerbestandsliste', lagerbestandslisteFile);
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("prompt", prompt);
+        setLoading(true);
+        setDownloadLink(null);
+        setErrorMessage('');
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/processDataAnalysis`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-    try {
-      setUploading(true);
-      setErrorMessage("");
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/processDataAnalysis`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        responseType: 'text', // Ensure response is handled as plain text
-      });
+            const { file, filename } = response.data;
+            const link = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${file}`;
+            setDownloadLink({ link, filename });
+            toast.success('Die Datei ist fertig, bitte herunterladen');
 
-      setResult(response.data);
-      setUploading(false);
-    } catch (error) {
-      console.error("Error uploading data:", error);
-      setErrorMessage("Fehler beim Hochladen der Daten.");
-      setUploading(false);
-    }
-  };
+        } catch (error) {
+            console.error('There was an error merging the files!', error);
+            setErrorMessage('Fehler beim Zusammenführen der Dateien. Bitte versuchen Sie es erneut.');
+            toast.error('etwas ist schief gelaufen');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4 mt-5">Datenanalyse</h2>
-      <div className="row justify-content-center">
-        <div className="col-md-2"></div>
-        <div className="col-md-10">
-          <div className="d-flex justify-content-end mb-3">
-            <Link to={"/List"} className="btn btn-primary ms-2">
-              Zurück
-            </Link>
-          </div>
+    const handleDownload = () => {
+        // This will reload the page after a slight delay to allow the download to start
+        setTimeout(() => {
+            window.location.reload();
+        }, 100);
+    };
 
-          <div className="mb-3">
-            <h3 className="p-2">Laden Sie Ihre Daten hoch</h3>
-            <input
-              type="file"
-              onChange={handleDataAnalysisFileChange}
-              className="form-control mt-3"
-              accept=".xlsx"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <textarea
-              value={prompt}
-              onChange={handleDataAnalysisPromptChange}
-              placeholder="Schreiben Sie Ihren Analyse-Prompt hier"
-              className="form-control"
-              rows="5"
-            ></textarea>
-          </div>
-          {errorMessage && (
-            <div style={{ color: "red", marginTop: "5px", fontSize: "14px" }}>
-              {errorMessage}
+    return (
+        <div className="container mt-5">
+            <h2 className="text-center mb-4 mt-5">Excel-Dateien zusammenführen</h2>
+            <div className="row justify-content-center">
+                <div className="col-md-2"></div>
+                <div className="col-md-10">
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label className="form-label">Qlikview-Datei:</label>
+                            <input
+                                type="file"
+                                name="qlikview"
+                                onChange={handleFileChange}
+                                className="form-control"
+                                accept=".xlsx"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Lagerbestandsliste-Datei:</label>
+                            <input
+                                type="file"
+                                name="lagerbestandsliste"
+                                onChange={handleFileChange}
+                                className="form-control"
+                                accept=".xlsx"
+                            />
+                        </div>
+                        {errorMessage && (
+                            <div style={{ color: "red", marginTop: "5px", fontSize: "14px" }}>
+                                {errorMessage}
+                            </div>
+                        )}
+                        <button type="submit" className="btn btn-primary mb-3" disabled={loading}>
+                            {loading ? 'Dateien zusammenführen...' : 'Dateien zusammenführen'}
+                        </button>
+                        {downloadLink && (
+                            <a
+                                href={downloadLink.link}
+                                download={downloadLink.filename}
+                                onClick={handleDownload}
+                                className="btn btn-success ms-3 mb-3"
+                            >
+                                Datei herunterladen
+                            </a>
+                        )}
+                    </form>
+                </div>
             </div>
-          )}
-          <button
-            onClick={sendDataAnalysisData}
-            className="btn btn-primary mb-3"
-            disabled={uploading}
-          >
-            {uploading ? "Schreiben..." : "Datenanalyse starten"}
-          </button>
-
-          {result && (
-           <div className="mt-5 p-4 bg-light rounded shadow-sm">
-           <h3 className="text-center text-dark">Analyseergebnis</h3>
-           <p className="mt-3" style={{ whiteSpace: "pre-wrap", color: "#333" }}>
-             {result}
-           </p>
-         </div>
-         
-          )}
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default DataAnalysis;
+export default ExcelMerge;

@@ -150,16 +150,7 @@ function InvoiceDetails() {
                     </div>
 
                     <div className="card-body d-flex flex-column">
-                      <div
-                        style={{
-                          backgroundColor: "rgba(0, 0, 0, 0.05)", // Slight black background color
-                          padding: "10px",
-                          borderRadius: "8px",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        
-                      </div>
+                     
                       <div
                         style={{
                           backgroundColor: "rgba(0, 0, 0, 0.05)", // Slight black background color
@@ -197,21 +188,7 @@ function InvoiceDetails() {
                           {matchedValue.due_date}
                         </p>
                       </div>
-                      {matchedValue.matched ? (
-                        <div
-                        className="alert alert-success text-primary p-3"
-                        role="alert"
-                        style={{ letterSpacing: "0.5px" , fontSize:'16px' }} // Adjust the letter spacing value as needed
-                      >
-                      <b> Rechnungsdaten stimmen mit den Nachrechnungsdaten überein.</b>  
-                      </div>
-                      
-                      ) : (
-                        <div className="alert alert-warning" role="alert">
-                          Rechnungsdaten stimmen nicht mit den
-                          Nachrechnungsdaten überein.
-                        </div>
-                      )}
+                     
                       <div className="mt-auto d-flex justify-content-end">
                         <button
                           className="btn btn-primary"
@@ -291,22 +268,7 @@ function InvoiceDetails() {
                     <strong>Gesamtsumme:</strong> {selectedInvoice.price}
                   </p>
 
-                  {selectedInvoice.matched ? (
-                    <div className="alert alert-success" role="alert">
-                      Rechnungsdaten stimmen mit den Nachrechnungsdaten überein.
-                    </div>
-                  ) : (
-                    <div
-                      className="alert alert-warning text-primary"
-                      role="alert"
-                    >
-                      <span>
-                        {" "}
-                        Rechnungsdaten stimmen nicht mit den Nachrechnungsdaten
-                        überein.
-                      </span>
-                    </div>
-                  )}
+                  
                 </>
               )}
             </div>

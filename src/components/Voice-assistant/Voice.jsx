@@ -13,25 +13,21 @@ function Dashboard() {
   const [errorMessage, setErrorMessage] = useState("");
   const [summaryError, setSummaryError] = useState("");
   const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
-  const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] =
-    useState(false);
+  const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] = useState(false);
   const [isSummaryGenerating, setIsSummaryGenerating] = useState(false);
   const navigate = useNavigate();
 
   const userLoginId = localStorage.getItem("user_Login_Id");
 
   useEffect(() => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
       recognition.lang = "de-DE";
-
       recognition.continuous = true;
       recognition.interimResults = true;
 
-      recognition.onstart = () =>
-        console.log("Spracherkennung aktiviert. Bitte sprechen.");
+      recognition.onstart = () => console.log("Spracherkennung aktiviert. Bitte sprechen.");
 
       recognition.onresult = (event) => {
         const transcript = Array.from(event.results)
@@ -41,8 +37,7 @@ function Dashboard() {
         setListeningText(transcript);
       };
 
-      recognition.onerror = (event) =>
-        console.error("Fehler bei der Erkennung:", event.error);
+      recognition.onerror = (event) => console.error("Fehler bei der Erkennung:", event.error);
 
       if (isListening) {
         recognition.start();
@@ -56,79 +51,89 @@ function Dashboard() {
 
   const handleListen = () => setIsListening(!isListening);
 
-const handleTranscribeClick = async () => {
+  const handleTranscribeClick = async () => {
     if (file) {
-        const formData = new FormData();
-        formData.append("audio", file);
-        formData.append("user_login_id", userLoginId); // Include the user_login_id in the form data
+      const formData = new FormData();
+      formData.append("audio", file);
+      formData.append("user_login_id", userLoginId);
 
-        try {
-            setTranscribing(true);
-            setErrorMessage("");
-
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/transcribe`,
-                {
-                    method: "POST",
-                    body: formData,
-                }
-            );
-
-            if (!response.ok)
-                throw new Error("Netzwerkantwort war nicht erfolgreich.");
-
-            const data = await response.json();
-
-            setTranscriptionText(
-                data.transcription.results.channels[0].alternatives[0].transcript
-            );
-            setTranscriptionSummary(data.summary);
-        } catch (error) {
-            console.error("Fehler beim Transkribieren der Datei:", error);
-            setErrorMessage("Fehler beim Transkribieren der Datei.");
-        } finally {
-            setTranscribing(false);
-        }
-    } else {
-        setErrorMessage("Bitte wählen Sie zuerst eine Datei aus.");
-    }
-};
-
-
-  const handleGenerateSummary = async () => {
-    try {
-        setIsSummaryGenerating(true);
+      try {
+        setTranscribing(true);
+        setErrorMessage("");
 
         const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/generateSummary`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    recordedText: listeningText,
-                    user_login_id: userLoginId, // Include the user_login_id in the body
-                }),
-            }
+          `${import.meta.env.VITE_API_URL}/transcribe`,
+          {
+            method: "POST",
+            body: formData,
+          }
         );
 
         if (!response.ok) {
-            throw new Error("Failed to generate summary.");
+          const errorText = await response.text();
+          throw new Error(errorText || "Netzwerkantwort war nicht erfolgreich.");
         }
 
         const data = await response.json();
-        setSummary(data.summary);
 
-        setIsEmailButtonVisible(true);
-    } catch (error) {
-        console.error("Error generating summary:", error);
-        setSummaryError("Error generating summary.");
-    } finally {
-        setIsSummaryGenerating(false);
+        setTranscriptionText(
+          data.transcription.results.channels[0].alternatives[0].transcript
+        );
+        setTranscriptionSummary(data.summary);
+      } catch (error) {
+        console.error("Fehler beim Transkribieren der Datei:", error);
+
+        // Parse the error message if it's JSON
+        let errorMessage = "Fehler beim Transkribieren der Datei.";
+        try {
+          const errorJson = JSON.parse(error.message);
+          if (errorJson.error) {
+            errorMessage = errorJson.error;
+          }
+        } catch (jsonError) {
+          errorMessage = error.message || errorMessage;
+        }
+
+        setErrorMessage(errorMessage);
+      } finally {
+        setTranscribing(false);
+      }
+    } else {
+      setErrorMessage("Bitte wählen Sie zuerst eine Datei aus.");
     }
-};
+  };
 
+  const handleGenerateSummary = async () => {
+    try {
+      setIsSummaryGenerating(true);
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/generateSummary`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recordedText: listeningText,
+          user_login_id: userLoginId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to generate summary.");
+      }
+
+      const data = await response.json();
+      setSummary(data.summary);
+
+      setIsEmailButtonVisible(true);
+    } catch (error) {
+      console.error("Error generating summary:", error);
+      setSummaryError(error.message || "Error generating summary.");
+    } finally {
+      setIsSummaryGenerating(false);
+    }
+  };
 
   const handleFileChange = (event) => setFile(event.target.files[0]);
 
@@ -161,7 +166,7 @@ const handleTranscribeClick = async () => {
       <h2 className="text-center mb-4">Protokoll</h2>
       <div className="row justify-content-center m-3">
         <div className="col-md-12">
-          <div className=" container d-sm-flex justify-content-end">
+          <div className="container d-sm-flex justify-content-end">
             <Link
               to={"/List"}
               className="btn btn-secondary mb-3 mb-sm-0"
@@ -180,7 +185,7 @@ const handleTranscribeClick = async () => {
         <div className="col-md-10">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title ">Nehmen Sie Ihre Stimme auf</h5>
+              <h5 className="card-title">Nehmen Sie Ihre Stimme auf</h5>
               {isListening || listeningText !== "" ? (
                 <textarea
                   className="form-control"
@@ -193,9 +198,7 @@ const handleTranscribeClick = async () => {
               ) : null}
 
               {summaryError && (
-                <div
-                  style={{ color: "red", marginTop: "5px", fontSize: "14px" }}
-                >
+                <div style={{ color: "red", marginTop: "5px", fontSize: "14px" }}>
                   {summaryError}
                 </div>
               )}
@@ -233,13 +236,9 @@ const handleTranscribeClick = async () => {
               setIsEmailButtonVisible(false);
               setIsGenerateSummaryButtonVisible(true);
             }}
-            className={`btn ${
-              isListening ? "btn-danger" : "btn-success"
-            } btn-block mb-3`}
+            className={`btn ${isListening ? "btn-danger" : "btn-success"} btn-block mb-3`}
           >
-            {isListening
-              ? "Spracherkennung stoppen"
-              : "Spracherkennung starten"}
+            {isListening ? "Spracherkennung stoppen" : "Spracherkennung starten"}
           </button>
 
           <h4 className="text-center p-3">Sprachaufzeichnung hochladen</h4>
@@ -271,7 +270,11 @@ const handleTranscribeClick = async () => {
                   onChange={(e) => setTranscriptionText(e.target.value)}
                 ></textarea>
                 <h5 className="card-title mt-4">Zusammenfassung</h5>
-                <p className="card-text" style={{ whiteSpace: 'break-spaces' }}>{transcriptionSummary}</p>
+                {typeof transcriptionSummary === 'string' ? (
+                  <p className="card-text" style={{ whiteSpace: 'break-spaces' }}>{transcriptionSummary}</p>
+                ) : (
+                  <p className="card-text" style={{ color: 'red' }}>Zusammenfassung konnte nicht erstellt werden.</p>
+                )}
                 <button
                   onClick={handleNextPageClickTranscription}
                   className="btn btn-outline-secondary btn-block"

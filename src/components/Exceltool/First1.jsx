@@ -54,7 +54,7 @@ const ExcelMerge = () => {
     };
 
     const handleDownload = () => {
-        // This will reload the page after a slight delay to allow the download to start
+        
         setTimeout(() => {
             window.location.reload();
         }, 100);

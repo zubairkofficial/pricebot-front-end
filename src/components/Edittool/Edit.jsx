@@ -120,6 +120,7 @@ function Edittool() {
         <div className="col-md-10">
           {files.map((fileArray, fileIndex) => (
             <div key={fileIndex} className="mb-3">
+              <h4 className = "p-2"> Laden Sie Ihre Rechnungen hoch</h4>
               <div className="d-flex align-items-center">
                 {fileIndex > 0 && (
                   <button

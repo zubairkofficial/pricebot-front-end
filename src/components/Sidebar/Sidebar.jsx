@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import logo from "/assets/logo.jpeg";
 import { Link, useParams } from "react-router-dom";
 import { FaSignOutAlt, FaAngleLeft, FaAngleRight } from "react-icons/fa"; // Importing the necessary icons
 
@@ -11,8 +10,6 @@ const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true); // State variable to track sidebar visibility
   const { id } = useParams();
   const [selectedEmail, setSelectedEmail] = useState("");
-  const [showId , setShowId] = useState('') ;
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,14 +22,11 @@ const Sidebar = () => {
         console.error("Error fetching latest PDF data:", error);
       }
 
-      
-      const userId = localStorage.getItem('user_Login_Id');
-  
-      // Construct the link dynamically. If there's no ID, the link will just be to '/Settings'
-      const settingsLink = userId ? `/Settings/${userId}` : '/Settings';
-    };
+      const userId = localStorage.getItem("user_Login_Id");
 
-    
+      // Construct the link dynamically. If there's no ID, the link will just be to '/Settings'
+      const settingsLink = userId ? `/Settings/${userId}` : "/Settings";
+    };
 
     const fetchDataById = async (id) => {
       try {
@@ -56,6 +50,12 @@ const Sidebar = () => {
     if (email) {
       setSelectedEmail(email);
     }
+
+    // Check screen width and set sidebar state
+    const screenWidth = window.innerWidth;
+    if (screenWidth <= 768) {
+      setSidebarOpen(false); // Close sidebar by default on mobile view
+    }
   }, []);
 
   function logout() {
@@ -76,15 +76,9 @@ const Sidebar = () => {
   function toggleSidebar() {
     setSidebarOpen(!sidebarOpen);
   }
-  
-
- 
-
 
   return (
     <div>
-      {/* Arrow button to toggle sidebar visibility */}
-
       {/* Sidebar */}
       <nav
         className={`pc-sidebar ${sidebarOpen ? "open" : "closed"}`}
@@ -274,7 +268,9 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
+        
       </nav>
+      
     </div>
   );
 };

@@ -48,6 +48,10 @@ import Exceltool from './pages/Exceltool2';
 import Edittool2 from './pages/Edit/Edittool2';
 import ApiSettings2 from './pages/Admin2/ApiSettings2';
 import Otherapi2 from './pages/Admin2/Otherapi2';
+import Department2 from './pages/Admin2/Department2';
+import EditDepartment2 from './pages/Admin2/EditDepartment2';
+
+import CreateDepartment from './pages/Admin2/CreateDepartment2';
 function App() {
   const router = createBrowserRouter([
     {
@@ -197,6 +201,19 @@ function App() {
     {
       path: "Other-Api-Settings",
       element: <Otherapi2 />,
+    },
+    {
+      path: "Department",
+      element: <Department2 />,
+    },
+    {
+      path: "Create_Department",
+      element: <CreateDepartment/>,
+    },
+
+    {
+      path: "Edit_Department/:departmentId",
+      element: <EditDepartment2/>,
     },
   ]);
 

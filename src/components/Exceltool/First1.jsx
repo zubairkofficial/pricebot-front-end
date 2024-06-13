@@ -62,53 +62,56 @@ const ExcelMerge = () => {
 
     return (
         <div className="container mt-5">
-            <h2 className="text-center mb-4 mt-5">Excel-Dateien zusammenführen</h2>
-            <div className="row justify-content-center">
-                <div className="col-md-2"></div>
-                <div className="col-md-10">
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label className="form-label">Qlikview-Datei:</label>
-                            <input
-                                type="file"
-                                name="qlikview"
-                                onChange={handleFileChange}
-                                className="form-control"
-                                accept=".xlsx"
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Lagerbestandsliste-Datei:</label>
-                            <input
-                                type="file"
-                                name="lagerbestandsliste"
-                                onChange={handleFileChange}
-                                className="form-control"
-                                accept=".xlsx"
-                            />
-                        </div>
-                        {errorMessage && (
-                            <div style={{ color: "red", marginTop: "5px", fontSize: "14px" }}>
-                                {errorMessage}
-                            </div>
-                        )}
-                        <button type="submit" className="btn btn-primary mb-3" disabled={loading}>
-                            {loading ? 'Dateien zusammenführen...' : 'Dateien zusammenführen'}
-                        </button>
-                        {/* {downloadLink && (
-                            <a
-                                href={downloadLink.link}
-                                download={downloadLink.filename}
-                                onClick={handleDownload}
-                                className="btn btn-success ms-3 mb-3"
-                            >
-                                Datei herunterladen
-                            </a>
-                        )} */}
-                    </form>
-                </div>
-            </div>
+    <h2 className="text-center mb-4 mt-5">Excel-Dateien zusammenführen</h2>
+    <div className="row justify-content-center">
+        <div className="col-md-2">
+            {/* Sidebar content can go here if needed */}
         </div>
+        <div className="col-md-10">
+            <form onSubmit={handleSubmit} className="p-4 border rounded shadow-sm bg-white">
+                <div className="mb-4">
+                    <label className="form-label">Qlikview-Datei:</label>
+                    <input
+                        type="file"
+                        name="qlikview"
+                        onChange={handleFileChange}
+                        className="form-control"
+                        accept=".xlsx"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="form-label">Lagerbestandsliste-Datei:</label>
+                    <input
+                        type="file"
+                        name="lagerbestandsliste"
+                        onChange={handleFileChange}
+                        className="form-control"
+                        accept=".xlsx"
+                    />
+                </div>
+                {errorMessage && (
+                    <div style={{ color: "red", marginTop: "5px", fontSize: "14px" }}>
+                        {errorMessage}
+                    </div>
+                )}
+                <button type="submit" className="btn btn-primary mb-3 btn-sm p-3 " disabled={loading}>
+                    {loading ? 'Dateien zusammenführen...' : 'Dateien zusammenführen'}
+                </button>
+                {downloadLink && (
+                    <a
+                        href={downloadLink.link}
+                        download={downloadLink.filename}
+                        onClick={handleDownload}
+                        className="btn btn-success mb-3 btn-sm  p-3 ms-2"
+                    >
+                        Datei herunterladen
+                    </a>
+                )}
+            </form>
+        </div>
+    </div>
+</div>
+
     );
 };
 

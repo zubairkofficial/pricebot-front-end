@@ -95,7 +95,7 @@ const ExcelMerge = () => {
                         <button type="submit" className="btn btn-primary mb-3" disabled={loading}>
                             {loading ? 'Dateien zusammenführen...' : 'Dateien zusammenführen'}
                         </button>
-                        {downloadLink && (
+                        {/* {downloadLink && (
                             <a
                                 href={downloadLink.link}
                                 download={downloadLink.filename}
@@ -104,7 +104,7 @@ const ExcelMerge = () => {
                             >
                                 Datei herunterladen
                             </a>
-                        )}
+                        )} */}
                     </form>
                 </div>
             </div>

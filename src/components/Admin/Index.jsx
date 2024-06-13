@@ -12,11 +12,13 @@ const UserTable = () => {
   const [roleToDelete, setRoleToDelete] = useState(null);
   const [showUsageModal, setShowUsageModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [pricePerToken, setPricePerToken] = useState(0);
   const { roleId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
+    fetchPricePerToken();
 
     if (location.state && location.state.alertMessage) {
       setAlertMessage(location.state.alertMessage);
@@ -37,6 +39,19 @@ const UserTable = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching user data:", error.message);
+    }
+  };
+
+  const fetchPricePerToken = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/getPricePerToken`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch price per token");
+      }
+      const data = await response.json();
+      setPricePerToken(data.price_per_token);
+    } catch (error) {
+      console.error("Error fetching price per token:", error.message);
     }
   };
 
@@ -119,10 +134,8 @@ const UserTable = () => {
                       <th scope="col">#</th>
                       <th scope="col">Name</th>
                       <th scope="col">Dienst</th>
-                  
-                       <th scope="col">Aktionen</th>
-                       <th scope="col">Verwendung</th>
-                     
+                      <th scope="col">Aktionen</th>
+                      <th scope="col">Verwendung</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -131,7 +144,6 @@ const UserTable = () => {
                         <td>{index + 1}</td>
                         <td>{user.name}</td>
                         <td>{user.services.join(", ")}</td>
-                       
                         <td>
                           <button
                             className="btn btn-primary btn-sm me-2"
@@ -147,10 +159,9 @@ const UserTable = () => {
                           >
                             <i className="bi bi-trash"></i>
                           </button>
-                          
                         </td>
                         <td>
-                        <button
+                          <button
                             className="btn btn-info btn-sm"
                             onClick={() => handleShowUsage(user)}
                             title="Usage anzeigen"
@@ -199,16 +210,56 @@ const UserTable = () => {
               <Modal.Title>Nutzungsdetails</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {selectedUser && (
-                <div>
-                  <p><strong>Name:</strong> {selectedUser.name}</p>
-                  <p><strong>E-mail:</strong> {selectedUser.email}</p>
-                  <p><strong>Protokoll Verwendung:</strong> {selectedUser.voice_tool}</p>
-                  <p><strong>Finde Lieferscheine mit Verwendung:</strong> {selectedUser.edit_tool}</p>
-                  <p><strong>Preishistorie Verwendung:</strong> {selectedUser.invoice_tool}</p>
-                  <p><strong>Datenanalyse Verwendung:</strong> {selectedUser.excel_tool}</p>
-                </div>
-              )}
+            {selectedUser && (
+  <div>
+    <p><strong>Name:</strong> {selectedUser.name}</p>
+    <p><strong>E-mail:</strong> {selectedUser.email}</p>
+    <table className="table">
+      <thead>
+        <tr>
+          <th>Tool</th>
+          <th>Token Usage</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Protokoll Verwendung</td>
+          <td>{selectedUser.voice_tool}</td>
+          <td>{selectedUser.voice_price} $</td>
+        </tr>
+        <tr>
+          <td>Finde Lieferscheine mit Verwendung</td>
+          <td>{selectedUser.edit_tool}</td>
+          <td>{selectedUser.edit_price} $</td>
+        </tr>
+        <tr>
+          <td>Preishistorie Verwendung</td>
+          <td>{selectedUser.invoice_tool}</td>
+          <td>{selectedUser.invoice_price} $ </td>
+        </tr>
+        {/* <tr>
+          <td>Datenanalyse Verwendung</td>
+          <td>{selectedUser.excel_tool}</td>
+          <td>{(selectedUser.excel_tool * pricePerToken).toFixed(5)}</td>
+        </tr> */}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colSpan="2"><strong>Total Price</strong></td>
+          <td>
+            {(
+              parseFloat(selectedUser.voice_price) +
+              parseFloat(selectedUser.edit_price) +
+              parseFloat(selectedUser.invoice_price)
+            ).toFixed(5)} $
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+)}
+
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleCloseUsageModal}>

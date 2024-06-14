@@ -34,6 +34,7 @@ const Login = () => {
       localStorage.setItem("user_Name", resp?.data?.user?.name);
       localStorage.setItem("user_Email", resp?.data?.user?.email);
       localStorage.setItem("user_Services", JSON.stringify(resp?.data?.user?.services));
+      localStorage.setItem("Department", JSON.stringify(resp?.data?.user?.department));
   
       // Show success message
       toast.success(resp?.data?.message);

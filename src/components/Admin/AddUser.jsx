@@ -1,17 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Select from "react-dropdown-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
-
-const services = [
-  { name: "Preisbot" },
-  { name: "Protokoll" },
-  { name: "Preishistorie" },
-];
-
-const roles = ["Admin", "User"];
 
 const myData = [
   { label: "Preisbot", value: "Preisbot" },
@@ -19,7 +11,6 @@ const myData = [
   { label: "Preishistorie", value: "Preishistorie" },
   { label: "Finde Lieferscheine mit", value: "Finde Lieferscheine mit" },
   { label: "Datenanalyse", value: "Datenanalyse" },
-  
 ];
 
 const AddUserForm = () => {
@@ -29,11 +20,32 @@ const AddUserForm = () => {
     password: "",
     showPassword: false,
     services: [],
-    role: "",
+    roles: [],
+    departments: [],
+    prompt: ""
   });
+  const [departments, setDepartments] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showAdditionalInputs, setShowAdditionalInputs] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try { 
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/GetDepartments`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch departments");
+        }
+        const data = await response.json();
+        setDepartments(data.map(dept => ({ label: dept.name, value: dept.name, prompt: dept.prompt }))); // Include prompt in the department data
+      } catch (error) {
+        console.error("Error fetching departments:", error.message);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,6 +55,13 @@ const AddUserForm = () => {
   const handleServiceChange = (values) => {
     const selectedValues = values.map((option) => option.value);
     setUser({ ...user, services: selectedValues });
+    setShowAdditionalInputs(selectedValues.includes("Protokoll"));
+  };
+
+  const handleDepartmentChange = (values) => {
+    const selectedValues = values.map((option) => option.value);
+    const selectedPrompts = values.map((option) => option.prompt).join("\n\n");
+    setUser({ ...user, departments: selectedValues, prompt: selectedPrompts });
   };
 
   const togglePasswordVisibility = () => {
@@ -52,8 +71,8 @@ const AddUserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user.name || !user.email || !user.password) {
-      setErrorMessage("Name, email, and password are required.");
+    if (!user.name || !user.email || !user.password ) {
+      setErrorMessage("Name, email, password, and at least one department are required.");
       setShowAlert(true);
       return;
     }
@@ -69,7 +88,9 @@ const AddUserForm = () => {
           email: user.email,
           password: user.password,
           services: user.services,
-          role: user.role,
+          roles: user.roles,
+          departments: user.departments,
+          prompt: user.prompt
         }),
       });
 
@@ -82,8 +103,11 @@ const AddUserForm = () => {
         name: "",
         email: "",
         password: "",
+        showPassword: false,
         services: [],
-        role: "",
+        roles: [],
+        departments: [],
+        prompt: ""
       });
 
       setErrorMessage("");
@@ -112,19 +136,12 @@ const AddUserForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="container p-4 rounded shadow-sm bg-light"
-    >
+    <form onSubmit={handleSubmit} className="container p-4 rounded shadow-sm bg-light">
       <h2 className="mb-4">Benutzer hinzufügen</h2>
       {showAlert && (
         <div className="alert alert-danger" role="alert">
           {errorMessage}
-          <button
-            type="button"
-            className="btn-close"
-            onClick={handleCloseAlert}
-          ></button>
+          <button type="button" className="btn-close" onClick={handleCloseAlert}></button>
         </div>
       )}
       <div className="mb-3">
@@ -156,10 +173,7 @@ const AddUserForm = () => {
         />
       </div>
       <div className="mb-3">
-        <label
-          htmlFor="passwordInput"
-          className="form-label d-flex align-items-center"
-        >
+        <label htmlFor="passwordInput" className="form-label d-flex align-items-center">
           Passwort
           <span className="ms-auto" onClick={togglePasswordVisibility}>
             <FontAwesomeIcon icon={user.showPassword ? faEyeSlash : faEye} />
@@ -189,15 +203,37 @@ const AddUserForm = () => {
           required
         />
       </div>
-      {/* <div className="mb-3">
-      <label htmlFor="roleSelect" className="form-label">Benutzerrolle</label>
-      <select className="form-select" id="roleSelect" name="role" value={user.role} onChange={handleChange}>
-        <option value="">Wählen...</option>
-        {roles.map((role, index) => (
-          <option key={index} value={role}>{role}</option>
-        ))}
-      </select>
-    </div> */}
+      {showAdditionalInputs && (
+        <>
+          <div className="mb-3">
+            <label htmlFor="departmentSelect" className="form-label">
+              Abteilung
+            </label>
+            <Select
+              options={departments}
+              onChange={handleDepartmentChange}
+              multi
+              placeholder="Abteilung auswählen"
+              className="form-control"
+              name="departments"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="promptInput" className="form-label">
+              Prompt
+            </label>
+            <textarea
+              className="form-control"
+              id="promptInput"
+              name="prompt"
+              value={user.prompt}
+              readOnly
+              rows="4"
+            ></textarea>
+          </div>
+        </>
+      )}
       <button type="submit" className="btn btn-outline-primary">
         Benutzer hinzufügen
       </button>

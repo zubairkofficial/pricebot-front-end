@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Select from "react-dropdown-select";
 
 function Dashboard() {
   const [isListening, setIsListening] = useState(false);
@@ -15,6 +16,11 @@ function Dashboard() {
   const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
   const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] = useState(false);
   const [isSummaryGenerating, setIsSummaryGenerating] = useState(false);
+  const [departments, setDepartments] = useState([]); // State to hold department data
+  const [selectedDepartmentsVoice, setSelectedDepartmentsVoice] = useState([]);
+  const [selectedDepartmentsTranscription, setSelectedDepartmentsTranscription] = useState([]);
+  const [selectedPromptsVoice, setSelectedPromptsVoice] = useState("");
+  const [selectedPromptsTranscription, setSelectedPromptsTranscription] = useState("");
   const navigate = useNavigate();
 
   const userLoginId = localStorage.getItem("user_Login_Id");
@@ -48,6 +54,24 @@ function Dashboard() {
       return () => recognition.stop();
     }
   }, [isListening]);
+
+  useEffect(() => {
+    // Fetch departments and prompts
+    const fetchDepartments = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/GetDepartments`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch departments");
+        }
+        const data = await response.json();
+        setDepartments(data.map(dept => ({ label: dept.name, value: dept.prompt }))); // Store departments with prompts
+      } catch (error) {
+        console.error("Error fetching departments:", error.message);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const handleListen = () => setIsListening(!isListening);
 
@@ -115,6 +139,7 @@ function Dashboard() {
         body: JSON.stringify({
           recordedText: listeningText,
           user_login_id: userLoginId,
+          prompts: selectedPromptsVoice
         }),
       });
 
@@ -142,6 +167,7 @@ function Dashboard() {
       state: {
         text: transcriptionText,
         summary: transcriptionSummary,
+        prompts: selectedPromptsTranscription
       },
     });
   };
@@ -151,6 +177,7 @@ function Dashboard() {
       state: {
         listeningText: listeningText,
         summary: summary,
+        prompts: selectedPromptsVoice
       },
     });
   };
@@ -159,6 +186,18 @@ function Dashboard() {
     setIsListening(false);
     handleGenerateSummary();
     setIsEmailButtonVisible(true);
+  };
+
+  const handleDepartmentChangeVoice = (values) => {
+    const selectedPrompts = values.map(v => v.value).join('\n\n');
+    setSelectedPromptsVoice(selectedPrompts);
+    setSelectedDepartmentsVoice(values);
+  };
+
+  const handleDepartmentChangeTranscription = (values) => {
+    const selectedPrompts = values.map(v => v.value).join('\n\n');
+    setSelectedPromptsTranscription(selectedPrompts);
+    setSelectedDepartmentsTranscription(values);
   };
 
   return (
@@ -196,6 +235,25 @@ function Dashboard() {
                   placeholder="Beginnen Sie zu sprechen oder laden Sie Ihre Sprache hoch, um sie hier zu transkribieren."
                 />
               ) : null}
+
+              <div className="mt-3">
+                <h5>Abteilungen und Prompts</h5>
+                <Select
+                  options={departments}
+                  onChange={handleDepartmentChangeVoice}
+                  multi
+                  placeholder="Wählen Sie Abteilungen"
+                  className="form-control"
+                />
+                {selectedPromptsVoice && (
+                  <textarea
+                    className="form-control mt-3"
+                    style={{ minHeight: "100px" }}
+                    readOnly
+                    value={selectedPromptsVoice}
+                  />
+                )}
+              </div>
 
               {summaryError && (
                 <div style={{ color: "red", marginTop: "5px", fontSize: "14px" }}>
@@ -284,6 +342,25 @@ function Dashboard() {
               </div>
             </div>
           )}
+
+          <div className="mt-3">
+            <h5>Abteilungen und Prompts</h5>
+            <Select
+              options={departments}
+              onChange={handleDepartmentChangeTranscription}
+              multi
+              placeholder="Wählen Sie Abteilungen"
+              className="form-control"
+            />
+            {selectedPromptsTranscription && (
+              <textarea
+                className="form-control mt-3"
+                style={{ minHeight: "100px" }}
+                readOnly
+                value={selectedPromptsTranscription}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

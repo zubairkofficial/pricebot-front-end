@@ -19,6 +19,8 @@ const FileUpload = () => {
     }
   }, []);
 
+  const id= localStorage.getItem('user_Login_Id');
+
   const services = [
     {
       id: "Listing",
@@ -28,11 +30,11 @@ const FileUpload = () => {
       link: "/preisbot"
     },
     {
-      id: "Voice-Assistant",
+      id: `Voice-Assistant/${id}`,
       name: "Protokoll",
       description: "Erstelle automatisch Protokolle aus Memos",
       img: "2.webp",
-      link: "/protokoll"
+      link: `/protokoll/${id}`
     },
     {
       id: "Delivery-Bills",

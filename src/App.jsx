@@ -112,7 +112,7 @@ function App() {
     }, // Add a new route for displaying compared data
 
     {
-      path: "/Voice-Assistant",
+      path: "/Voice-Assistant/:id",
       element: <Voice2 />,
     },
 

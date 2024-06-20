@@ -16,14 +16,19 @@ function Dashboard() {
   const [isEmailButtonVisible, setIsEmailButtonVisible] = useState(false);
   const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] = useState(false);
   const [isSummaryGenerating, setIsSummaryGenerating] = useState(false);
-  const [departments, setDepartments] = useState([]); // State to hold department data
+  const [departments, setDepartments] = useState([]);
   const [selectedDepartmentsVoice, setSelectedDepartmentsVoice] = useState([]);
   const [selectedDepartmentsTranscription, setSelectedDepartmentsTranscription] = useState([]);
   const [selectedPromptsVoice, setSelectedPromptsVoice] = useState("");
   const [selectedPromptsTranscription, setSelectedPromptsTranscription] = useState("");
+  const [showDepartmentSelectionVoice, setShowDepartmentSelectionVoice] = useState(false);
+  const [showDepartmentSelectionTranscription, setShowDepartmentSelectionTranscription] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
+  const [showTranscriptionSummary, setShowTranscriptionSummary] = useState(false);
   const navigate = useNavigate();
 
   const userLoginId = localStorage.getItem("user_Login_Id");
+  const userDepartment = (localStorage.getItem("Department")); // Retrieve user's department from local storage
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -56,7 +61,6 @@ function Dashboard() {
   }, [isListening]);
 
   useEffect(() => {
-    // Fetch departments and prompts
     const fetchDepartments = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/GetDepartments`);
@@ -64,7 +68,7 @@ function Dashboard() {
           throw new Error("Failed to fetch departments");
         }
         const data = await response.json();
-        setDepartments(data.map(dept => ({ label: dept.name, value: dept.prompt }))); // Store departments with prompts
+        setDepartments(data.map(dept => ({ label: dept.name, value: dept.prompt })));
       } catch (error) {
         console.error("Error fetching departments:", error.message);
       }
@@ -103,11 +107,10 @@ function Dashboard() {
         setTranscriptionText(
           data.transcription.results.channels[0].alternatives[0].transcript
         );
-        setTranscriptionSummary(data.summary);
+        setShowDepartmentSelectionTranscription(true);
       } catch (error) {
         console.error("Fehler beim Transkribieren der Datei:", error);
 
-        // Parse the error message if it's JSON
         let errorMessage = "Fehler beim Transkribieren der Datei.";
         try {
           const errorJson = JSON.parse(error.message);
@@ -127,7 +130,7 @@ function Dashboard() {
     }
   };
 
-  const handleGenerateSummary = async () => {
+  const handleGenerateSummaryVoice = async () => {
     try {
       setIsSummaryGenerating(true);
 
@@ -150,7 +153,40 @@ function Dashboard() {
 
       const data = await response.json();
       setSummary(data.summary);
+      setShowSummary(true);
+      setIsEmailButtonVisible(true);
+    } catch (error) {
+      console.error("Error generating summary:", error);
+      setSummaryError(error.message || "Error generating summary.");
+    } finally {
+      setIsSummaryGenerating(false);
+    }
+  };
 
+  const handleGenerateSummaryTranscription = async () => {
+    try {
+      setIsSummaryGenerating(true);
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/generateSummary`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recordedText: transcriptionText,
+          user_login_id: userLoginId,
+          prompts: selectedPromptsTranscription
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to generate summary.");
+      }
+
+      const data = await response.json();
+      setTranscriptionSummary(data.summary);
+      setShowTranscriptionSummary(true);
       setIsEmailButtonVisible(true);
     } catch (error) {
       console.error("Error generating summary:", error);
@@ -184,20 +220,21 @@ function Dashboard() {
 
   const handleStopListening = () => {
     setIsListening(false);
-    handleGenerateSummary();
-    setIsEmailButtonVisible(true);
+    setShowDepartmentSelectionVoice(true);
   };
 
   const handleDepartmentChangeVoice = (values) => {
     const selectedPrompts = values.map(v => v.value).join('\n\n');
     setSelectedPromptsVoice(selectedPrompts);
     setSelectedDepartmentsVoice(values);
+    setIsGenerateSummaryButtonVisible(true);
   };
 
   const handleDepartmentChangeTranscription = (values) => {
     const selectedPrompts = values.map(v => v.value).join('\n\n');
     setSelectedPromptsTranscription(selectedPrompts);
     setSelectedDepartmentsTranscription(values);
+    setIsGenerateSummaryButtonVisible(true);
   };
 
   return (
@@ -236,40 +273,42 @@ function Dashboard() {
                 />
               ) : null}
 
-              <div className="mt-3">
-                <h5>Abteilungen und Prompts</h5>
-                <Select
-                  options={departments}
-                  onChange={handleDepartmentChangeVoice}
-                  multi
-                  placeholder="Wählen Sie Abteilungen"
-                  className="form-control"
-                />
-                {selectedPromptsVoice && (
-                  <textarea
-                    className="form-control mt-3"
-                    style={{ minHeight: "100px" }}
-                    readOnly
-                    value={selectedPromptsVoice}
+              {showDepartmentSelectionVoice && (
+                <div className="mt-3">
+                  <h5>Wählen Sie Ihre Abteilungen aus</h5>
+                  <Select
+                    options={departments}
+                    onChange={handleDepartmentChangeVoice}
+                    multi
+                    placeholder="Wählen Sie Abteilungen"
+                    className="form-control"
                   />
-                )}
-              </div>
+                  {selectedPromptsVoice && (
+                    <textarea
+                      className="form-control mt-3"
+                      style={{ minHeight: "100px" }}
+                      readOnly
+                      value={selectedPromptsVoice}
+                    />
+                  )}
+                </div>
+              )}
 
               {summaryError && (
                 <div style={{ color: "red", marginTop: "5px", fontSize: "14px" }}>
                   {summaryError}
                 </div>
               )}
-              {summary && (
+              {showSummary && (
                 <div>
                   <h5 className="mt-3">Zusammenfassung:</h5>
                   <p className="card-text" style={{ whiteSpace: 'break-spaces' }}>{summary}</p>
                 </div>
               )}
-              {!isListening && isGenerateSummaryButtonVisible && (
+              {!isListening && isGenerateSummaryButtonVisible && showDepartmentSelectionVoice && (
                 <div>
                   <button
-                    onClick={handleGenerateSummary}
+                    onClick={handleGenerateSummaryVoice}
                     className="btn btn-secondary mt-3 me-1"
                     disabled={isSummaryGenerating}
                   >
@@ -290,9 +329,15 @@ function Dashboard() {
 
           <button
             onClick={() => {
-              setIsListening(!isListening);
-              setIsEmailButtonVisible(false);
-              setIsGenerateSummaryButtonVisible(true);
+              if (isListening) {
+                handleStopListening();
+              } else {
+                setIsListening(true);
+                setIsEmailButtonVisible(false);
+                setIsGenerateSummaryButtonVisible(false);
+                setShowDepartmentSelectionVoice(false);
+                setShowSummary(false);
+              }
             }}
             className={`btn ${isListening ? "btn-danger" : "btn-success"} btn-block mb-3`}
           >
@@ -327,40 +372,55 @@ function Dashboard() {
                   value={transcriptionText}
                   onChange={(e) => setTranscriptionText(e.target.value)}
                 ></textarea>
-                <h5 className="card-title mt-4">Zusammenfassung</h5>
-                {typeof transcriptionSummary === 'string' ? (
-                  <p className="card-text" style={{ whiteSpace: 'break-spaces' }}>{transcriptionSummary}</p>
-                ) : (
-                  <p className="card-text" style={{ color: 'red' }}>Zusammenfassung konnte nicht erstellt werden.</p>
+                {showDepartmentSelectionTranscription && (
+                  <div className="mt-3">
+                    <h5>Wählen Sie Ihre Abteilungen aus</h5>
+                    <Select
+                      options={departments}
+                      onChange={handleDepartmentChangeTranscription}
+                      multi
+                      placeholder="Wählen Sie Abteilungen"
+                      className="form-control"
+                    />
+                    {selectedPromptsTranscription && (
+                      <textarea
+                        className="form-control mt-3"
+                        style={{ minHeight: "100px" }}
+                        readOnly
+                        value={selectedPromptsTranscription}
+                      />
+                    )}
+                  </div>
                 )}
-                <button
-                  onClick={handleNextPageClickTranscription}
-                  className="btn btn-outline-secondary btn-block"
-                >
-                  Per E-Mail senden
-                </button>
+
+                {showTranscriptionSummary && (
+                  <div>
+                    <h5 className="mt-3">Zusammenfassung:</h5>
+                    <p className="card-text" style={{ whiteSpace: 'break-spaces' }}>{transcriptionSummary}</p>
+                  </div>
+                )}
+                {showDepartmentSelectionTranscription && isGenerateSummaryButtonVisible && (
+                  <div>
+                    <button
+                      onClick={handleGenerateSummaryTranscription}
+                      className="btn btn-secondary mt-3 me-1"
+                      disabled={isSummaryGenerating}
+                    >
+                      {isSummaryGenerating ? "Zusammenfassung wird generiert..." : "Zusammenfassung generieren"}
+                    </button>
+                    {isEmailButtonVisible && (
+                      <button
+                        onClick={handleNextPageClickTranscription}
+                        className="btn btn-outline-secondary mt-3"
+                      >
+                        Per E-Mail senden
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
-
-          <div className="mt-3">
-            <h5>Abteilungen und Prompts</h5>
-            <Select
-              options={departments}
-              onChange={handleDepartmentChangeTranscription}
-              multi
-              placeholder="Wählen Sie Abteilungen"
-              className="form-control"
-            />
-            {selectedPromptsTranscription && (
-              <textarea
-                className="form-control mt-3"
-                style={{ minHeight: "100px" }}
-                readOnly
-                value={selectedPromptsTranscription}
-              />
-            )}
-          </div>
         </div>
       </div>
     </div>

@@ -195,7 +195,7 @@ const EditUserForm = () => {
                       name="departments"
                     />
                   </div>
-                  <div className="mb-3">
+                  {/* <div className="mb-3">
                     <label htmlFor="promptInput" className="form-label">
                       Prompt
                     </label>
@@ -207,7 +207,7 @@ const EditUserForm = () => {
                       readOnly
                       rows="4"
                     ></textarea>
-                  </div>
+                  </div> */}
                 </>
               )}
               <div className="d-flex justify-content-start">

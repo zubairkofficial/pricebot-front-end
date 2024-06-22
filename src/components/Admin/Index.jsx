@@ -35,7 +35,7 @@ const UserTable = () => {
         throw new Error("Failed to fetch user data");
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setUsers(data.roles);
       setLoading(false);
     } catch (error) {
@@ -45,7 +45,9 @@ const UserTable = () => {
 
   const fetchPricePerToken = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/getPricePerToken`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/getPricePerToken`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch price per token");
       }
@@ -137,7 +139,7 @@ const UserTable = () => {
                       <th scope="col">Dienst</th>
                       <th scope="col">Abteilung</th>
                       <th scope="col">Aktionen</th>
-                     
+
                       <th scope="col">Verwendung</th>
                     </tr>
                   </thead>
@@ -147,8 +149,9 @@ const UserTable = () => {
                         <td>{index + 1}</td>
                         <td>{user.name}</td>
                         <td>{user.services.join(", ")}</td>
-                        <td>{user.department ? user.department.join(", ") : ""}</td>
-
+                        <td>
+                          {user.department ? user.department.join(", ") : ""}
+                        </td>
 
                         <td>
                           <button
@@ -197,7 +200,10 @@ const UserTable = () => {
               Sind Sie sicher, dass Sie diese Rolle löschen möchten?
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowConfirmation(false)}>
+              <Button
+                variant="secondary"
+                onClick={() => setShowConfirmation(false)}
+              >
                 Abbrechen
               </Button>
               <Button variant="danger" onClick={confirmDelete}>
@@ -207,65 +213,67 @@ const UserTable = () => {
           </Modal>
 
           {/* Usage Modal */}
-          <Modal
-            show={showUsageModal}
-            onHide={handleCloseUsageModal}
-            centered
-          >
+          <Modal show={showUsageModal} onHide={handleCloseUsageModal} centered>
             <Modal.Header closeButton>
               <Modal.Title>Nutzungsdetails</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-            {selectedUser && (
-  <div>
-    <p><strong>Name:</strong> {selectedUser.name}</p>
-    <p><strong>E-mail:</strong> {selectedUser.email}</p>
-    <table className="table">
-      <thead>
-        <tr>
-          <th>Tool</th>
-          <th>Token Usage</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Protokoll Verwendung</td>
-          <td>{selectedUser.voice_tool}</td>
-          <td>{selectedUser.voice_price} $</td>
-        </tr>
-        <tr>
-          <td>Finde Lieferscheine mit Verwendung</td>
-          <td>{selectedUser.edit_tool}</td>
-          <td>{selectedUser.edit_price} $</td>
-        </tr>
-        <tr>
-          <td>Preishistorie Verwendung</td>
-          <td>{selectedUser.invoice_tool}</td>
-          <td>{selectedUser.invoice_price} $ </td>
-        </tr>
-        {/* <tr>
+              {selectedUser && (
+                <div>
+                  <p>
+                    <strong>Name:</strong> {selectedUser.name}
+                  </p>
+                  <p>
+                    <strong>E-mail:</strong> {selectedUser.email}
+                  </p>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Tool</th>
+                        <th>Token Usage</th>
+                        <th>Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Protokoll Verwendung</td>
+                        <td>{selectedUser.voice_tool}</td>
+                        <td>{selectedUser.voice_price} $</td>
+                      </tr>
+                      <tr>
+                        <td>Finde Lieferscheine mit Verwendung</td>
+                        <td>{selectedUser.edit_tool}</td>
+                        <td>{selectedUser.edit_price} $</td>
+                      </tr>
+                      <tr>
+                        <td>Preishistorie Verwendung</td>
+                        <td>{selectedUser.invoice_tool}</td>
+                        <td>{selectedUser.invoice_price} $ </td>
+                      </tr>
+                      {/* <tr>
           <td>Datenanalyse Verwendung</td>
           <td>{selectedUser.excel_tool}</td>
           <td>{(selectedUser.excel_tool * pricePerToken).toFixed(5)}</td>
         </tr> */}
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colSpan="2"><strong>Total Price</strong></td>
-          <td>
-            {(
-              parseFloat(selectedUser.voice_price) +
-              parseFloat(selectedUser.edit_price) +
-              parseFloat(selectedUser.invoice_price)
-            ).toFixed(5)} $
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-)}
-
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan="2">
+                          <strong>Total Price</strong>
+                        </td>
+                        <td>
+                          {(
+                            parseFloat(selectedUser.voice_price) +
+                            parseFloat(selectedUser.edit_price) +
+                            parseFloat(selectedUser.invoice_price)
+                          ).toFixed(5)}{" "}
+                          $
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleCloseUsageModal}>

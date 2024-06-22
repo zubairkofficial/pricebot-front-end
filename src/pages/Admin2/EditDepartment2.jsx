@@ -8,15 +8,14 @@ import Footer from "../../components/Footer/Footer";
 import Offcanvas from "../../components/Offcanvas/Offcanvas";
 import { useNavigate } from "react-router-dom";
 import Sidebar2 from "../../components/Sidebar/Sidebae2";
-import First from '../../components/Dasboard/First';
-import Index from '../../components/Admin/Index';
-import AddUser from '../../components/Admin/AddUser';
-import SideBar from '../../components/Admin/SideBar';
-import Edit from '../../components/Admin/Edit';
-import ApiSettings from '../../components/Admin/ApiSettings';
+import First from "../../components/Dasboard/First";
+import Index from "../../components/Admin/Index";
+import AddUser from "../../components/Admin/AddUser";
+import SideBar from "../../components/Admin/SideBar";
+import Edit from "../../components/Admin/Edit";
+import ApiSettings from "../../components/Admin/ApiSettings";
 import Department from "../../components/Admin/Department";
-import EditDepartment from '../../components/Admin/EditDepartment';
-
+import EditDepartment from "../../components/Admin/EditDepartment";
 
 const Index2 = () => {
   const navigate = useNavigate();
@@ -56,9 +55,8 @@ const Index2 = () => {
         <SideBar />
         {/* <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start --> */}
         {/* <Header /> */}
-            < EditDepartment/>
-        
- 
+        <EditDepartment />
+
         <Footer />
         <Offcanvas />
       </body>

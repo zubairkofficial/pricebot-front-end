@@ -17,8 +17,8 @@ function Dashboard() {
   const [isGenerateSummaryButtonVisible, setIsGenerateSummaryButtonVisible] = useState(false);
   const [isSummaryGenerating, setIsSummaryGenerating] = useState(false);
   const [departments, setDepartments] = useState([]);
-  const [selectedDepartmentsVoice, setSelectedDepartmentsVoice] = useState([]);
-  const [selectedDepartmentsTranscription, setSelectedDepartmentsTranscription] = useState([]);
+  const [selectedDepartmentVoice, setSelectedDepartmentVoice] = useState(null);
+  const [selectedDepartmentTranscription, setSelectedDepartmentTranscription] = useState(null);
   const [selectedPromptsVoice, setSelectedPromptsVoice] = useState("");
   const [selectedPromptsTranscription, setSelectedPromptsTranscription] = useState("");
   const [showDepartmentSelectionVoice, setShowDepartmentSelectionVoice] = useState(false);
@@ -28,7 +28,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const userLoginId = localStorage.getItem("user_Login_Id");
-  const userDepartment = (localStorage.getItem("Department")); // Retrieve user's department from local storage
+  const userDepartments = JSON.parse(localStorage.getItem("Department") || "[]");
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -68,14 +68,15 @@ function Dashboard() {
           throw new Error("Failed to fetch departments");
         }
         const data = await response.json();
-        setDepartments(data.map(dept => ({ label: dept.name, value: dept.prompt })));
+        const filteredDepartments = data.filter(dept => userDepartments.includes(dept.name));
+        setDepartments(filteredDepartments.map(dept => ({ label: dept.name, value: dept.prompt })));
       } catch (error) {
         console.error("Error fetching departments:", error.message);
       }
     };
 
     fetchDepartments();
-  }, []);
+  }, [userDepartments]);
 
   const handleListen = () => setIsListening(!isListening);
 
@@ -108,6 +109,7 @@ function Dashboard() {
           data.transcription.results.channels[0].alternatives[0].transcript
         );
         setShowDepartmentSelectionTranscription(true);
+        setIsGenerateSummaryButtonVisible(true);
       } catch (error) {
         console.error("Fehler beim Transkribieren der Datei:", error);
 
@@ -221,20 +223,29 @@ function Dashboard() {
   const handleStopListening = () => {
     setIsListening(false);
     setShowDepartmentSelectionVoice(true);
+    setIsGenerateSummaryButtonVisible(true);
   };
 
   const handleDepartmentChangeVoice = (values) => {
-    const selectedPrompts = values.map(v => v.value).join('\n\n');
-    setSelectedPromptsVoice(selectedPrompts);
-    setSelectedDepartmentsVoice(values);
-    setIsGenerateSummaryButtonVisible(true);
+    if (values.length > 0) {
+      const selectedPrompts = values[0].value;
+      setSelectedPromptsVoice(selectedPrompts);
+      setSelectedDepartmentVoice(values[0]);
+    } else {
+      setSelectedPromptsVoice("");
+      setSelectedDepartmentVoice(null);
+    }
   };
 
   const handleDepartmentChangeTranscription = (values) => {
-    const selectedPrompts = values.map(v => v.value).join('\n\n');
-    setSelectedPromptsTranscription(selectedPrompts);
-    setSelectedDepartmentsTranscription(values);
-    setIsGenerateSummaryButtonVisible(true);
+    if (values.length > 0) {
+      const selectedPrompts = values[0].value;
+      setSelectedPromptsTranscription(selectedPrompts);
+      setSelectedDepartmentTranscription(values[0]);
+    } else {
+      setSelectedPromptsTranscription("");
+      setSelectedDepartmentTranscription(null);
+    }
   };
 
   return (
@@ -259,6 +270,7 @@ function Dashboard() {
       <div className="row justify-content-center pt-3">
         <div className="col-md-2"></div>
         <div className="col-md-10">
+          {/* Voice Recording Section */}
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">Nehmen Sie Ihre Stimme auf</h5>
@@ -279,12 +291,14 @@ function Dashboard() {
                   <Select
                     options={departments}
                     onChange={handleDepartmentChangeVoice}
-                    multi
-                    placeholder="Wählen Sie Abteilungen"
+                    values={selectedDepartmentVoice ? [selectedDepartmentVoice] : []}
+                    multi={false}
+                    placeholder="Wählen Sie eine Abteilung"
                     className="form-control"
                   />
                   {selectedPromptsVoice && (
-                    <textarea
+                    <input
+                      type="hidden"
                       className="form-control mt-3"
                       style={{ minHeight: "100px" }}
                       readOnly
@@ -344,6 +358,7 @@ function Dashboard() {
             {isListening ? "Spracherkennung stoppen" : "Spracherkennung starten"}
           </button>
 
+          {/* Voice Transcription Section */}
           <h4 className="text-center p-3">Sprachaufzeichnung hochladen</h4>
           <input
             type="file"
@@ -378,12 +393,14 @@ function Dashboard() {
                     <Select
                       options={departments}
                       onChange={handleDepartmentChangeTranscription}
-                      multi
-                      placeholder="Wählen Sie Abteilungen"
+                      values={selectedDepartmentTranscription ? [selectedDepartmentTranscription] : []}
+                      multi={false}
+                      placeholder="Wählen Sie eine Abteilung"
                       className="form-control"
                     />
                     {selectedPromptsTranscription && (
-                      <textarea
+                      <input
+                        type="hidden"
                         className="form-control mt-3"
                         style={{ minHeight: "100px" }}
                         readOnly

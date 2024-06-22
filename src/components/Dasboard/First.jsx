@@ -30,11 +30,11 @@ const FileUpload = () => {
       link: "/preisbot"
     },
     {
-      id: `Voice-Assistant/${id}`,
+      id: `Voice-Assistant`,
       name: "Protokoll",
       description: "Erstelle automatisch Protokolle aus Memos",
       img: "2.webp",
-      link: `/protokoll/${id}`
+      link: `/protokoll`
     },
     {
       id: "Delivery-Bills",

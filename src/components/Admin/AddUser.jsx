@@ -38,7 +38,7 @@ const AddUserForm = () => {
           throw new Error("Failed to fetch departments");
         }
         const data = await response.json();
-        setDepartments(data.map(dept => ({ label: dept.name, value: dept.name, prompt: dept.prompt }))); // Include prompt in the department data
+        setDepartments(data.map(dept => ({ label: dept.name, value: dept.name, prompt: dept.prompt }))); 
       } catch (error) {
         console.error("Error fetching departments:", error.message);
       }
